@@ -4,13 +4,14 @@ public class Edge implements EdgeData {
 
     private int source;
     private int destination;
-    //?private  double weight;
+    private  double weight;
     private String info;
     private int tag;
 
-    public Edge(int source, int destination){
+    public Edge(int source, int destination,double weight){
         this.destination = destination;
         this.source = source;
+        this.weight = weight;
     }
 
     @Override
@@ -25,7 +26,7 @@ public class Edge implements EdgeData {
 
     @Override
     public double getWeight() {
-        return 0;
+        return this.weight;
     }
 
     @Override

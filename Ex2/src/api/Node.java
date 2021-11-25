@@ -1,11 +1,14 @@
 package api;
 
+import java.util.HashMap;
+
 public class Node implements NodeData{
 
     private int key;
     private Location location;
     private String info;
     private int tag;
+    private HashMap<Integer, Node> neighbors;
 
     public Node(int key,Location geo){
         this.key = key;
