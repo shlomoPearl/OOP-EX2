@@ -17,6 +17,14 @@ public class Node implements NodeData{
         // info?
     }
 
+//    public Node(Node n){
+//        this.key= n.key;
+//        this.location= new Location(n.location);
+//        this.tag= n.tag;
+//        this.info=n.info;
+//
+//    }
+
     @Override
     public int getKey() {
         return this.key;
