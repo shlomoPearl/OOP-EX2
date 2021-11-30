@@ -2,28 +2,27 @@ package api;
 
 import java.util.HashMap;
 
-public class Node implements NodeData{
+public class Node implements NodeData {
 
     private int key;
     private Location location;
     private String info;
     private int tag;
-    private HashMap<Integer, Node> neighbors;
+//    private HashMap<Integer, Node> neighbors;
 
-    public Node(int key,Location geo){
+    public Node(int key, Location geo) {
         this.key = key;
         this.location = new Location(geo);
         this.tag = 0;
-        // info?
+        this.info = "";
     }
 
-//    public Node(Node n){
-//        this.key= n.key;
-//        this.location= new Location(n.location);
-//        this.tag= n.tag;
-//        this.info=n.info;
-//
-//    }
+    public Node(Node n) {
+        this.key = n.key;
+        this.location = new Location(n.location);
+        this.tag = n.tag;
+        this.info = n.info;
+    }
 
     @Override
     public int getKey() {
@@ -37,13 +36,15 @@ public class Node implements NodeData{
 
     @Override
     public void setLocation(GeoLocation p) {
-        this.location= new Location((Location) p);
+        this.location = new Location((Location) p);
     }
+
     //pass
     @Override
     public double getWeight() {
         return 0;
     }
+
     //pass
     @Override
     public void setWeight(double w) {

@@ -13,7 +13,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     private DirectedWeightedGraph g;
 
-    public GraphAlgorithm(DirectedWeightedGraph g) {
+    public GraphAlgorithm() {
 
     }
 
