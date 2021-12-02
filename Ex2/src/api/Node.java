@@ -8,6 +8,7 @@ public class Node implements NodeData {
     private Location location;
     private String info;
     private int tag;
+    private double inWeight;
 //    private HashMap<Integer, Node> neighbors;
 
     public Node(int key, Location geo) {
@@ -22,6 +23,14 @@ public class Node implements NodeData {
         this.location = new Location(n.location);
         this.tag = n.tag;
         this.info = n.info;
+    }
+
+    public double getInWeight(){
+        return this.inWeight;
+    }
+
+    public void setInWeight(double w){
+        this.inWeight = w;
     }
 
     @Override

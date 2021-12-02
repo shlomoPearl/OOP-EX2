@@ -22,7 +22,7 @@ public class DWGraph implements DirectedWeightedGraph {
 
     public DWGraph() {
     }
-
+    // copy constructor
     public DWGraph(DWGraph g) {
 
         HashMap<Integer, NodeData> nodes_copy = new HashMap<>();
@@ -74,7 +74,11 @@ public class DWGraph implements DirectedWeightedGraph {
             return "(" + src + ", " + dest + ")"; //+ ", "+w
         }
 
-        @Override
+//    public HashMap<Integer, HashMap<Integer, EdgeData>> getEdges_from_node() {
+//        return this.edges_from_node;
+//    }
+
+    @Override
         public NodeData getNode ( int key){
             return nodes.get(key);
         }
@@ -94,6 +98,7 @@ public class DWGraph implements DirectedWeightedGraph {
         public void connect ( int src, int dest, double w){
             Edge edge = new Edge(src, dest, w);
             String tuple = tuple(src, dest);
+
             if (!edges.containsKey(tuple)) {
                 edges.put(tuple, edge);
                 if (!edges_from_node.containsKey(src)) {
@@ -112,7 +117,6 @@ public class DWGraph implements DirectedWeightedGraph {
 
         @Override
         public Iterator<NodeData> nodeIter () {
-
             Iterator<NodeData> node_iterator = nodes.values().iterator();
             return node_iterator;
         }
