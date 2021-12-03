@@ -1,7 +1,6 @@
 package api;
 
 import com.google.gson.Gson;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -68,12 +67,12 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         }
         return ans;
     }
-    
+
 
     @Override
     public List<NodeData> shortestPath(int src, int dest) {
-        List<NodeData> ans = new ArrayList<>();
-        ans.add(g.getNode(src));
+        LinkedList<Node> tmp = new LinkedList<>();
+        LinkedList<NodeData> ans = new LinkedList<>();
 
         HashMap<Integer, Node> unCheckedNode = new HashMap<>();
         DWGraph copy_graph = new DWGraph((DWGraph) this.g);
@@ -89,16 +88,31 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
             Node currentNode = minWeight(unCheckedNode);
             unCheckedNode.remove(currentNode.getKey());
 
-            Iterator<EdgeData> edgeIterator = copy_graph.edgeIter(currentNode.getKey());
+            Iterator<EdgeData> edgeIterator = g.edgeIter(currentNode.getKey());
             while (edgeIterator.hasNext()) {
                 Edge currentEdge = (Edge) edgeIterator.next();
-                Node nextNode = (Node) copy_graph.getNode(currentEdge.getDest());
+                Node nextNode = (Node) g.getNode(currentEdge.getDest());
+                Node prevNode = (Node) g.getNode(currentEdge.getSrc());
                 if (currentEdge.getWeight() + currentNode.getInWeight() < nextNode.getInWeight()) {
                     nextNode.setInWeight(currentEdge.getWeight() + currentNode.getInWeight());
+                    nextNode.setKeyPrevNode(currentNode.getKey());
+                    if (nextNode.getKey() == dest) {
+                        tmp.clear();
+                        while (prevNode.getKey() != src || prevNode.getKeyPrevNode() == prevNode.getKey()){
+                            tmp.addFirst(prevNode);
+                            prevNode = (Node) g.getNode(prevNode.getKeyPrevNode());
+                        }
+                    }
+                    if (tmp.get(0).getKeyPrevNode() == src){
+                        ans.clear();
+                        ans.addAll(tmp);
+                    }
                 }
-            }
 
+            }
         }
+        ans.addFirst(g.getNode(src));
+        ans.addLast(g.getNode(dest));
         return ans;
     }
 
