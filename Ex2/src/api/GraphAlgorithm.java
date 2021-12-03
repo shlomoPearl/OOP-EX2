@@ -1,6 +1,7 @@
 package api;
 
 import com.google.gson.Gson;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
@@ -41,8 +42,12 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     @Override
     public double shortestPathDist(int src, int dest) {
-        Node a = (Node) g.getNode(dest);
-        return a.getInWeight();
+        double ans = 0;
+        List<NodeData> list = shortestPath(src, dest);
+        for (int i = 0; i < list.size()-1; i++) {
+            ans += g.getEdge(list.get(i).getKey(),list.get(i+1).getKey()).getWeight();
+        }
+        return ans;
     }
 
     private void initialMax(HashMap<Integer, Node> hm, int src) {
@@ -98,12 +103,12 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
                     nextNode.setKeyPrevNode(currentNode.getKey());
                     if (nextNode.getKey() == dest) {
                         tmp.clear();
-                        while (prevNode.getKey() != src || prevNode.getKeyPrevNode() == prevNode.getKey()){
+                        while (prevNode.getKey() != src || prevNode.getKeyPrevNode() == prevNode.getKey()) {
                             tmp.addFirst(prevNode);
                             prevNode = (Node) g.getNode(prevNode.getKeyPrevNode());
                         }
                     }
-                    if (tmp.get(0).getKeyPrevNode() == src){
+                    if (tmp.get(0).getKeyPrevNode() == src) {
                         ans.clear();
                         ans.addAll(tmp);
                     }
