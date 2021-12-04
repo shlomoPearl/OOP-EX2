@@ -44,8 +44,8 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     public double shortestPathDist(int src, int dest) {
         double ans = 0;
         List<NodeData> list = shortestPath(src, dest);
-        for (int i = 0; i < list.size()-1; i++) {
-            ans += g.getEdge(list.get(i).getKey(),list.get(i+1).getKey()).getWeight();
+        for (int i = 0; i < list.size() - 1; i++) {
+            ans += g.getEdge(list.get(i).getKey(), list.get(i + 1).getKey()).getWeight();
         }
         return ans;
     }
@@ -80,7 +80,6 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         LinkedList<NodeData> ans = new LinkedList<>();
 
         HashMap<Integer, Node> unCheckedNode = new HashMap<>();
-        DWGraph copy_graph = new DWGraph((DWGraph) this.g);
 
         Iterator<NodeData> nodeIter = g.nodeIter();
         while (nodeIter.hasNext()) {
@@ -103,21 +102,19 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
                     nextNode.setKeyPrevNode(currentNode.getKey());
                     if (nextNode.getKey() == dest) {
                         tmp.clear();
-                        while (prevNode.getKey() != src || prevNode.getKeyPrevNode() == prevNode.getKey()) {
+                        tmp.add(nextNode);
+                        while (prevNode.getKey() != src) {
                             tmp.addFirst(prevNode);
                             prevNode = (Node) g.getNode(prevNode.getKeyPrevNode());
                         }
+                        tmp.add((Node) g.getNode(src));
                     }
-                    if (tmp.get(0).getKeyPrevNode() == src) {
-                        ans.clear();
-                        ans.addAll(tmp);
-                    }
+                    ans.clear();
+                    ans.addAll(tmp);
                 }
 
             }
         }
-        ans.addFirst(g.getNode(src));
-        ans.addLast(g.getNode(dest));
         return ans;
     }
 
