@@ -10,6 +10,8 @@ import java.util.*;
 public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     private DirectedWeightedGraph g;
+    private boolean[] visited1 = new boolean[g.nodeSize()];
+    private boolean[] visited2 = new boolean[g.nodeSize()];
 
     public GraphAlgorithm() {
 
@@ -30,28 +32,50 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return new DWGraph((DWGraph) this.g);
     }
 
-//    private void gT(DWGraph g){
-//        Iterator<EdgeData> edgeIter = g.edgeIter();
-//        while (edgeIter.hasNext()){
-//            Edge current = (Edge) edgeIter.next();
-//            current.
-//        }
-//    }
+
+    private boolean dfs(DWGraph g ,Node n){
+        n.setTag(1);
+        Iterator<EdgeData> edgeIter = g.edgeIter(n.getKey());
+        while (edgeIter.hasNext()){
+            Node next = (Node) g.getNode(edgeIter.next().getDest());
+            if (next.getTag() != 1) {
+                dfs(g, next);
+            }
+        }
+        boolean result = true;
+        Iterator<NodeData> nodeIter= g.nodeIter();
+        while (nodeIter.hasNext()){
+            Node current = (Node) nodeIter.next();
+            result = result && (current.getTag() == 1);
+        }
+        return result;
+    }
 
     @Override
     public boolean isConnected() {
-//        Iterator<NodeData> node_iter = g.nodeIter();
-//        while (node_iter.hasNext()){
-//            Node current = (Node) node_iter.next();
-//
-//        }
-        return false;
+        Iterator<NodeData> nodeIter = g.nodeIter();
+        if (nodeIter.hasNext()){
+            Node current = (Node) nodeIter.next();
+            int key = current.getKey();
+            boolean first_pass = dfs((DWGraph) g,current);
+            DWGraph transpose = ((DWGraph) g).transpose();
+            Iterator<NodeData> transpose_iter = transpose.nodeIter();
+            while (transpose_iter.hasNext()){
+                transpose_iter.next().setTag(0);
+            }
+            Node new_current = (Node) transpose.getNode(key);
+            boolean second_pass = dfs(transpose,new_current);
+            return first_pass && second_pass;
+        }
+        return true;
     }
 
     @Override
     public double shortestPathDist(int src, int dest) {
-        shortestPath(src, dest);
-        return ((Node) g.getNode(dest)).getInWeight();
+        if (shortestPath(src, dest) != null) {
+            return ((Node) g.getNode(dest)).getInWeight();
+        }
+        return -1;
     }
 
     private void initialMax(HashMap<Integer, Node> hm, int src) {
@@ -115,7 +139,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
                 }
             }
         }
-        return ans;
+        return (!ans.isEmpty()) ? ans : null;
     }
 
     @Override

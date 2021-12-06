@@ -1,7 +1,5 @@
 package api;
 
-import java.util.HashMap;
-
 public class Node implements NodeData {
 
     private int key;
@@ -10,7 +8,6 @@ public class Node implements NodeData {
     private int tag;
     private double inWeight;
     private int keyPrevNode;
-//    private HashMap<Integer, Node> neighbors;
 
     public Node(int key, Location geo) {
         this.key = key;
