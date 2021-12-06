@@ -30,13 +30,13 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return new DWGraph((DWGraph) this.g);
     }
 
-    private void gT(DWGraph g){
-        Iterator<EdgeData> edgeIter = g.edgeIter();
-        while (edgeIter.hasNext()){
-            Edge current = (Edge) edgeIter.next();
-            current.
-        }
-    }
+//    private void gT(DWGraph g){
+//        Iterator<EdgeData> edgeIter = g.edgeIter();
+//        while (edgeIter.hasNext()){
+//            Edge current = (Edge) edgeIter.next();
+//            current.
+//        }
+//    }
 
     @Override
     public boolean isConnected() {
