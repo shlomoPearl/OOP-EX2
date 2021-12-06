@@ -30,6 +30,14 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return new DWGraph((DWGraph) this.g);
     }
 
+    private void gT(DWGraph g){
+        Iterator<EdgeData> edgeIter = g.edgeIter();
+        while (edgeIter.hasNext()){
+            Edge current = (Edge) edgeIter.next();
+            current.
+        }
+    }
+
     @Override
     public boolean isConnected() {
 //        Iterator<NodeData> node_iter = g.nodeIter();
@@ -42,12 +50,8 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     @Override
     public double shortestPathDist(int src, int dest) {
-        double ans = 0;
-        List<NodeData> list = shortestPath(src, dest);
-        for (int i = 0; i < list.size() - 1; i++) {
-            ans += g.getEdge(list.get(i).getKey(), list.get(i + 1).getKey()).getWeight();
-        }
-        return ans;
+        shortestPath(src, dest);
+        return ((Node) g.getNode(dest)).getInWeight();
     }
 
     private void initialMax(HashMap<Integer, Node> hm, int src) {
@@ -76,7 +80,6 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     @Override
     public List<NodeData> shortestPath(int src, int dest) {
-        LinkedList<Node> tmp = new LinkedList<>();
         LinkedList<NodeData> ans = new LinkedList<>();
 
         HashMap<Integer, Node> unCheckedNode = new HashMap<>();
@@ -101,18 +104,15 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
                     nextNode.setInWeight(currentEdge.getWeight() + currentNode.getInWeight());
                     nextNode.setKeyPrevNode(currentNode.getKey());
                     if (nextNode.getKey() == dest) {
-                        tmp.clear();
-                        tmp.add(nextNode);
+                        ans.clear();
+                        ans.add(nextNode);
                         while (prevNode.getKey() != src) {
-                            tmp.addFirst(prevNode);
+                            ans.addFirst(prevNode);
                             prevNode = (Node) g.getNode(prevNode.getKeyPrevNode());
                         }
-                        tmp.add((Node) g.getNode(src));
+                        ans.addFirst((Node) g.getNode(src));
                     }
-                    ans.clear();
-                    ans.addAll(tmp);
                 }
-
             }
         }
         return ans;
