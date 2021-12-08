@@ -1,26 +1,23 @@
 package api;
 
-//import com.google.gson.Gson;
-//import com.google.gson.GsonBuilder;
-//import com.google.gson.JsonObject;
-//import org.json.JSONObject;
-//import com.google.gson.JsonObject;
-//import org.json.simple.JSONObject;
 
+//import java.io.FileWriter;
+//import java.io.IOException;
+//
+//import org.json.simple.JSONArray;
+////import org.json.JSONArray;
+//import org.json.simple.JSONObject;
 import java.io.FileWriter;
 import java.io.IOException;
 
 import org.json.simple.JSONArray;
 import org.json.*;
-
 import java.util.*;
 
 
 public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     private DirectedWeightedGraph g;
-//    private boolean[] visited1 = new boolean[g.nodeSize()];
-//    private boolean[] visited2 = new boolean[g.nodeSize()];
 
     public GraphAlgorithm() {
 
@@ -287,7 +284,6 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         try {
             FileWriter save = new FileWriter(file);
             Iterator<EdgeData> edgeIter = g.edgeIter();
-//            Iterator<NodeData> nodeIter = g.nodeIter();
             JSONObject graph = new JSONObject();
             JSONArray edge_list = new JSONArray();
             while (edgeIter.hasNext()) {
@@ -315,12 +311,14 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
             save.close();
         } catch (IOException e) {
             e.printStackTrace();
+
         }
         return true;
     }
 
     @Override
     public boolean load(String file) {
+
         return false;
     }
 }

@@ -2,6 +2,8 @@ package api;
 
 import com.google.gson.Gson;
 
+import javax.imageio.IIOException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -141,23 +143,40 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public Iterator<NodeData> nodeIter() {
+        int currentMC = this.MC;
         Iterator<NodeData> node_iterator = nodes.values().iterator();
-        return node_iterator;
+        if (currentMC < this.MC) {
+            throw new RuntimeException("the graph change");
+        } else {
+            return node_iterator;
+        }
     }
 
     @Override
     public Iterator<EdgeData> edgeIter() {
+        int currentMC = this.MC;
         Iterator<EdgeData> edge_iterator = edges.values().iterator();
-        return edge_iterator;
+        if (currentMC < this.MC) {
+            throw new RuntimeException("the graph change");
+        } else {
+            return edge_iterator;
+        }
     }
 
     @Override
     public Iterator<EdgeData> edgeIter(int node_id) {
         HashMap hm = edges_from_node.get(node_id);
         if (hm != null) {
+            int currentMC = this.MC;
             Iterator<EdgeData> ne_Iterator = hm.values().iterator();
-            return ne_Iterator;
-        }else return null;
+            if (currentMC < this.MC) {
+                throw new RuntimeException("the graph change");
+            } else {
+                return ne_Iterator;
+            }
+        } else {
+            return null;
+        }
     }
 
     @Override
