@@ -5,7 +5,19 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+
+
 public class main {
+
+    static int checkAge(int age) {
+        if (age < 18) {
+            throw new ArithmeticException("Access denied - You must be at least 18 years old.");
+        }
+        else {
+            System.out.println("Access granted - You are old enough!");
+        }
+        return 0;
+    }
 
     public static void main(String[] args) {
         DWGraph graph1 = new DWGraph();
