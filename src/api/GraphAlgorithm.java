@@ -10,7 +10,8 @@ package api;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
+import org.json.*;
 
 import java.util.*;
 
@@ -283,26 +284,34 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     @Override
     public boolean save(String file) {
-        JSONObject jsonObject = new JSONObject();
         try {
             FileWriter save = new FileWriter(file);
             Iterator<EdgeData> edgeIter = g.edgeIter();
-            Iterator<NodeData> nodeIter = g.nodeIter();
-            jsonObject.put("Edges",'[');
+//            Iterator<NodeData> nodeIter = g.nodeIter();
+            JSONObject graph = new JSONObject();
+            JSONArray edge_list = new JSONArray();
             while (edgeIter.hasNext()) {
                 Edge current = (Edge) edgeIter.next();
-                jsonObject.put("src", current.getSrc());
-                jsonObject.put("w", current.getWeight());
-                jsonObject.put("dest", current.getDest());
-                save.write(jsonObject.toJSONString());
+                JSONObject edge = new JSONObject();
+                edge.put("src", current.getSrc());
+                edge.put("w", current.getWeight());
+                edge.put("dest", current.getDest());
+                edge_list.add(edge);
             }
-            jsonObject.put("Nodes",'[');
+            graph.put("Edges", edge_list);
+            Iterator<NodeData> nodeIter = g.nodeIter();
+            JSONObject nodes = new JSONObject();
+            JSONArray node_list = new JSONArray();
             while (nodeIter.hasNext()) {
                 Node current = (Node) nodeIter.next();
-                jsonObject.put("pos", "" + current.getLocation().x() + "," + current.getLocation().y() + "," + current.getLocation().z());
-                jsonObject.put("id", current.getKey());
-                save.write(jsonObject.toJSONString());
+                JSONObject node = new JSONObject();
+                String pos = current.getLocation().x() + ", " + current.getLocation().y() + ", " + current.getLocation().z();
+                node.put("pos", pos);
+                node.put("id", current.getKey());
+                node_list.add(node);
             }
+            graph.put("Nodes", node_list);
+            save.write(graph.toString(4));
             save.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -312,7 +321,6 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     @Override
     public boolean load(String file) {
-
         return false;
     }
 }
