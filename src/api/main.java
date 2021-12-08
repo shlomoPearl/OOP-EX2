@@ -57,6 +57,7 @@ public class main {
         double d = g1.shortestPathDist(2,6);
         LinkedList<NodeData> list= (LinkedList<NodeData>) g1.shortestPath(2,4);
         g1.save("shlomo.json");
+        g2.load("shlomo.json");
         System.out.println(d);
         //System.out.println(list.get(2).getKey());
         System.out.println(g1.isConnected());

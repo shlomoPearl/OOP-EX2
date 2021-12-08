@@ -7,10 +7,15 @@ package api;
 //import com.google.gson.JsonObject;
 //import org.json.simple.JSONObject;
 
-import java.io.FileWriter;
-import java.io.IOException;
 
+import java.io.*;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import org.json.simple.JSONArray;
+import com.google.gson.JsonParser;
+import org.json.simple.parser.JSONParser;
 import org.json.*;
 
 import java.util.*;
@@ -321,6 +326,31 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     @Override
     public boolean load(String file) {
-        return false;
+        DWGraph loaded_graph = new DWGraph();
+        try {
+            JsonObject graph = JsonParser.parseReader(new FileReader(file)).getAsJsonObject();
+            JsonArray node_list = (JsonArray) graph.get("Nodes");
+            for (JsonElement json_node : node_list) {
+                int id = json_node.getAsJsonObject().get("id").getAsInt();
+                String[] geo_location = json_node.getAsJsonObject().get("pos").getAsString().split(",");
+                System.out.println(Arrays.toString(geo_location));
+                double x = Double.parseDouble(geo_location[0]);
+                double y = Double.parseDouble(geo_location[1]);
+                double z = Double.parseDouble(geo_location[2]);
+                loaded_graph.addNode(new Node(id, new Location(x, y, z)));
+            }
+            JsonArray edge_list = (JsonArray) graph.get("Edges");
+            for (JsonElement json_edge : edge_list) {
+                int src = json_edge.getAsJsonObject().get("src").getAsInt();
+                int dest = json_edge.getAsJsonObject().get("dest").getAsInt();
+                double w = json_edge.getAsJsonObject().get("w").getAsDouble();
+                loaded_graph.connect(src, dest, w);
+            }
+            g = loaded_graph;
+            return true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
