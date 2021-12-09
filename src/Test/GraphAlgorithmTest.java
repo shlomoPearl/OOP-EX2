@@ -1,11 +1,18 @@
-package api;
+package Test;
+
+import api.DWGraph;
+import api.GraphAlgorithm;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GraphAlgorithmTest {
 
+     GraphAlgorithm graph1 = new GraphAlgorithm();
+
+
     @org.junit.jupiter.api.Test
     void init() {
+
     }
 
     @org.junit.jupiter.api.Test
@@ -42,6 +49,6 @@ class GraphAlgorithmTest {
 
     @org.junit.jupiter.api.Test
     void load() {
-        g1
+
     }
 }

@@ -1,5 +1,7 @@
 package api;
+
 import java.io.*;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -48,10 +50,15 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
             }
         }
         boolean result = true;
+
         Iterator<NodeData> nodeIter = g.nodeIter();
-        while (nodeIter.hasNext()) {
-            Node current = (Node) nodeIter.next();
-            result = result && (current.getTag() == 1);
+        try {
+            while (nodeIter.hasNext()) {
+                Node current = (Node) nodeIter.next();
+                result = result && (current.getTag() == 1);
+            }
+        }catch (ConcurrentModificationException e){
+            throw new RuntimeException("The graph has been changed. The iterator isn't up to date.");
         }
         return result;
     }

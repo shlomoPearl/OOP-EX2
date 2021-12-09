@@ -1,7 +1,5 @@
 package api;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -64,7 +62,7 @@ public class main {
         GraphAlgorithm g1 =new GraphAlgorithm();
         g1.init(graph1);
         GraphAlgorithm g2 =new GraphAlgorithm();
-        g2.init(graph2);
+        //g2.init(graph2);
 
         double d = g1.shortestPathDist(2,6);
         LinkedList<NodeData> list= (LinkedList<NodeData>) g1.shortestPath(2,4);
@@ -90,6 +88,4 @@ public class main {
         System.out.println("center g2: "+a);
 
     }
-
-
 }

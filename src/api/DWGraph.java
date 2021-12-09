@@ -84,9 +84,6 @@ public class DWGraph implements DirectedWeightedGraph {
         return "(" + src + ", " + dest + ")"; //+ ", "+w
     }
 
-    //    public HashMap<Integer, HashMap<Integer, EdgeData>> getEdges_from_node() {
-//        return this.edges_from_node;
-//    }
     public DWGraph transpose() {
         DWGraph transpose = new DWGraph(this);
         transpose.edges_from_node.clear();
@@ -143,37 +140,22 @@ public class DWGraph implements DirectedWeightedGraph {
 
     @Override
     public Iterator<NodeData> nodeIter() {
-        int currentMC = this.MC;
         Iterator<NodeData> node_iterator = nodes.values().iterator();
-        if (currentMC < this.MC) {
-            throw new RuntimeException("The graph changed.");
-        } else {
-            return node_iterator;
-        }
+        return node_iterator;
     }
 
     @Override
     public Iterator<EdgeData> edgeIter() {
-        int currentMC = this.MC;
         Iterator<EdgeData> edge_iterator = edges.values().iterator();
-        if (currentMC < this.MC) {
-            throw new RuntimeException("The graph changed.");
-        } else {
-            return edge_iterator;
-        }
+        return edge_iterator;
     }
 
     @Override
     public Iterator<EdgeData> edgeIter(int node_id) {
         HashMap hm = edges_from_node.get(node_id);
         if (hm != null) {
-            int currentMC = this.MC;
             Iterator<EdgeData> ne_Iterator = hm.values().iterator();
-            if (currentMC < this.MC) {
-                throw new RuntimeException("The graph changed.");
-            } else {
-                return ne_Iterator;
-            }
+            return ne_Iterator;
         } else {
             return null;
         }

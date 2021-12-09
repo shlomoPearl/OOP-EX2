@@ -1,6 +1,6 @@
 package api;
 
-public class dge implements EdgeData {
+public class Edge implements EdgeData {
 
     private int source;
     private int destination;
