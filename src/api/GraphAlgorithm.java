@@ -196,8 +196,8 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     @Override
     public NodeData center() {
-        double[] ans = new double[2];
-        ans[1] = Double.MAX_VALUE;
+        NodeData center = null;
+        double min_max_dist = Double.MAX_VALUE;
         double count;
         Iterator<NodeData> nodeIter1 = g.nodeIter();
         try {
@@ -205,20 +205,20 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
                 Node current1 = (Node) nodeIter1.next();
                 shortestPath(current1.getKey());
                 Iterator<NodeData> nodeIter2 = g.nodeIter();
-                count = 0;
+                double current_max_dist = Double.MIN_VALUE;
                 while (nodeIter2.hasNext()) {
                     Node current2 = (Node) nodeIter2.next();
-                    count += current2.getInWeight();
+                    current_max_dist = (current2.getInWeight() > current_max_dist) ? current2.getInWeight() : current_max_dist;
                 }
-                if (count < ans[1]) {
-                    ans[0] = current1.getKey();
-                    ans[1] = count;
+                if (current_max_dist < min_max_dist) {
+                    min_max_dist = current_max_dist;
+                    center = current1;
                 }
             }
         } catch (ConcurrentModificationException e) {
             throw new RuntimeException(graph_change());
         }
-        return g.getNode((int) ans[0]);
+        return center;
     }
 
     private void shortestPath(int src) {
