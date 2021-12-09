@@ -157,7 +157,7 @@ public class DWGraph implements DirectedWeightedGraph {
         int currentMC = this.MC;
         Iterator<EdgeData> edge_iterator = edges.values().iterator();
         if (currentMC < this.MC) {
-            throw new RuntimeException("the graph change");
+            throw new RuntimeException("the graph changed");
         } else {
             return edge_iterator;
         }
@@ -170,7 +170,7 @@ public class DWGraph implements DirectedWeightedGraph {
             int currentMC = this.MC;
             Iterator<EdgeData> ne_Iterator = hm.values().iterator();
             if (currentMC < this.MC) {
-                throw new RuntimeException("the graph change");
+                throw new RuntimeException("the graph changed");
             } else {
                 return ne_Iterator;
             }
