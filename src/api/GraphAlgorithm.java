@@ -328,8 +328,10 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     public boolean load(String file) {
         DWGraph loaded_graph = new DWGraph();
         try {
+            //initiate new graph
             JsonObject graph = JsonParser.parseReader(new FileReader(file)).getAsJsonObject();
             JsonArray node_list = (JsonArray) graph.get("Nodes");
+            //craete nodes from node array in json and add to graph:
             for (JsonElement json_node : node_list) {
                 int id = json_node.getAsJsonObject().get("id").getAsInt();
                 String[] geo_location = json_node.getAsJsonObject().get("pos").getAsString().split(",");
@@ -339,13 +341,16 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
                 double z = Double.parseDouble(geo_location[2]);
                 loaded_graph.addNode(new Node(id, new Location(x, y, z)));
             }
+
             JsonArray edge_list = (JsonArray) graph.get("Edges");
+            //create edges in graph using info from edges array in json:
             for (JsonElement json_edge : edge_list) {
                 int src = json_edge.getAsJsonObject().get("src").getAsInt();
                 int dest = json_edge.getAsJsonObject().get("dest").getAsInt();
                 double w = json_edge.getAsJsonObject().get("w").getAsDouble();
                 loaded_graph.connect(src, dest, w);
             }
+            //update g:
             g = loaded_graph;
             return true;
         } catch (FileNotFoundException e) {
