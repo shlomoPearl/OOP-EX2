@@ -1,10 +1,8 @@
 package api;
 
-import com.google.gson.Gson;
-
-import javax.imageio.IIOException;
-import java.io.IOException;
-import java.util.*;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
+import java.util.Iterator;
 
 public class DWGraph implements DirectedWeightedGraph {
 
@@ -34,7 +32,7 @@ public class DWGraph implements DirectedWeightedGraph {
                 Node current = (Node) node_iterator.next();
                 nodes_copy.put(current.getKey(), new Node(current));
             }
-        }catch(ConcurrentModificationException e){
+        } catch (ConcurrentModificationException e) {
             throw new RuntimeException("The graph has been modified. Iterator not up to date.");
         }
         HashMap<String, EdgeData> edges_copy = new HashMap<>();
@@ -44,7 +42,7 @@ public class DWGraph implements DirectedWeightedGraph {
                 Edge current = (Edge) edge_iterator.next();
                 edges_copy.put(tuple(current.getSrc(), current.getDest()), new Edge(current));
             }
-        }catch (ConcurrentModificationException e){
+        } catch (ConcurrentModificationException e) {
             throw new RuntimeException("The graph has been modified. Iterator not up to date.");
         }
 
@@ -224,7 +222,7 @@ public class DWGraph implements DirectedWeightedGraph {
     }
 
     @Override
-    public String toString(){
-        return edges.toString()+"\n"+nodes.toString();
+    public String toString() {
+        return "Nodes: " + nodes.values().toString() + "\nEdges: " + edges.values().toString();
     }
 }
