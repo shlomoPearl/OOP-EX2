@@ -1,5 +1,6 @@
 package api;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -86,6 +87,7 @@ public class main {
         System.out.println("center g1: "+g1.center().getKey());
         int a = g2.center().getKey();
         System.out.println("center g2: "+a);
+        System.out.println(g1.shortestPath(1,1));
 
     }
 }

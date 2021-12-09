@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 
 import javax.imageio.IIOException;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 public class DWGraph implements DirectedWeightedGraph {
 
@@ -32,16 +29,23 @@ public class DWGraph implements DirectedWeightedGraph {
 
         HashMap<Integer, NodeData> nodes_copy = new HashMap<>();
         Iterator<NodeData> node_iterator = g.nodeIter();
-        while (node_iterator.hasNext()) {
-            Node current = (Node) node_iterator.next();
-            nodes_copy.put(current.getKey(), new Node(current));
+        try {
+            while (node_iterator.hasNext()) {
+                Node current = (Node) node_iterator.next();
+                nodes_copy.put(current.getKey(), new Node(current));
+            }
+        }catch(ConcurrentModificationException e){
+            throw new RuntimeException("The graph has been modified. Iterator not up to date.");
         }
-
         HashMap<String, EdgeData> edges_copy = new HashMap<>();
         Iterator<EdgeData> edge_iterator = g.edgeIter();
-        while (edge_iterator.hasNext()) {
-            Edge current = (Edge) edge_iterator.next();
-            edges_copy.put(tuple(current.getSrc(), current.getDest()), new Edge(current));
+        try {
+            while (edge_iterator.hasNext()) {
+                Edge current = (Edge) edge_iterator.next();
+                edges_copy.put(tuple(current.getSrc(), current.getDest()), new Edge(current));
+            }
+        }catch (ConcurrentModificationException e){
+            throw new RuntimeException("The graph has been modified. Iterator not up to date.");
         }
 
         HashMap<Integer, HashMap<Integer, EdgeData>> edges_f_n_copy = new HashMap<>();

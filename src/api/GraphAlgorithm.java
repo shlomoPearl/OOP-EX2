@@ -57,7 +57,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
                 Node current = (Node) nodeIter.next();
                 result = result && (current.getTag() == 1);
             }
-        }catch (ConcurrentModificationException e){
+        } catch (ConcurrentModificationException e) {
             throw new RuntimeException("The graph has been changed. The iterator isn't up to date.");
         }
         return result;
@@ -121,8 +121,6 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     @Override
     public List<NodeData> shortestPath(int src, int dest) {
-        if (src == dest) return null;
-        LinkedList<NodeData> ans = new LinkedList<>();
 
         HashMap<Integer, Node> unCheckedNode = new HashMap<>();
 
@@ -133,6 +131,11 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         }
 
         initialMax(unCheckedNode, src);
+        LinkedList<NodeData> ans = new LinkedList<>();
+        if (src == dest){
+            ans.add(g.getNode(src));
+            return ans;
+        }
 
         while (!unCheckedNode.isEmpty()) {
             Node currentNode = minWeight(unCheckedNode);
@@ -169,19 +172,23 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         ans[1] = Double.MAX_VALUE;
         double count;
         Iterator<NodeData> nodeIter1 = g.nodeIter();
-        while (nodeIter1.hasNext()) {
-            Node current1 = (Node) nodeIter1.next();
-            shortestPath(current1.getKey());
-            Iterator<NodeData> nodeIter2 = g.nodeIter();
-            count = 0;
-            while (nodeIter2.hasNext()) {
-                Node current2 = (Node) nodeIter2.next();
-                count += current2.getInWeight();
+        try {
+            while (nodeIter1.hasNext()) {
+                Node current1 = (Node) nodeIter1.next();
+                shortestPath(current1.getKey());
+                Iterator<NodeData> nodeIter2 = g.nodeIter();
+                count = 0;
+                while (nodeIter2.hasNext()) {
+                    Node current2 = (Node) nodeIter2.next();
+                    count += current2.getInWeight();
+                }
+                if (count < ans[1]) {
+                    ans[0] = current1.getKey();
+                    ans[1] = count;
+                }
             }
-            if (count < ans[1]) {
-                ans[0] = current1.getKey();
-                ans[1] = count;
-            }
+        }catch (ConcurrentModificationException e ){
+            throw new RuntimeException("The graph has been modified. Iterator not up to date.");
         }
         return g.getNode((int) ans[0]);
     }
@@ -189,9 +196,13 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     private void shortestPath(int src) {
         HashMap<Integer, Node> unCheckedNode = new HashMap<>();
         Iterator<NodeData> nodeIter = g.nodeIter();
-        while (nodeIter.hasNext()) {
-            Node current = (Node) nodeIter.next();
-            unCheckedNode.put(current.getKey(), current);
+        try {
+            while (nodeIter.hasNext()) {
+                Node current = (Node) nodeIter.next();
+                unCheckedNode.put(current.getKey(), current);
+            }
+        }catch (ConcurrentModificationException e){
+            throw new RuntimeException("The graph has been modified. Iterator not up to date.");
         }
         initialMax(unCheckedNode, src);
 
@@ -200,14 +211,19 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
             unCheckedNode.remove(currentNode.getKey());
             if (g.edgeIter(currentNode.getKey()) != null) {
                 Iterator<EdgeData> edgeIterator = g.edgeIter(currentNode.getKey());
-                while (edgeIterator.hasNext()) {
-                    Edge currentEdge = (Edge) edgeIterator.next();
-                    Node nextNode = (Node) g.getNode(currentEdge.getDest());
-                    Node prevNode = (Node) g.getNode(currentEdge.getSrc());
-                    if (currentEdge.getWeight() + currentNode.getInWeight() < nextNode.getInWeight()) {
-                        nextNode.setInWeight(currentEdge.getWeight() + currentNode.getInWeight());
-                        nextNode.setKeyPrevNode(currentNode.getKey());
+                try {
+                    while (edgeIterator.hasNext()) {
+                        Edge currentEdge = (Edge) edgeIterator.next();
+                        Node nextNode = (Node) g.getNode(currentEdge.getDest());
+                        Node prevNode = (Node) g.getNode(currentEdge.getSrc());
+                        if (currentEdge.getWeight() + currentNode.getInWeight() < nextNode.getInWeight()) {
+                            nextNode.setInWeight(currentEdge.getWeight() + currentNode.getInWeight());
+                            nextNode.setKeyPrevNode(currentNode.getKey());
+                        }
                     }
+                }catch (ConcurrentModificationException e){
+                    throw new RuntimeException("The edges from a node have been modified during iteration upon its " +
+                            "outgoing edges. Iterator not up to date.");
                 }
             } else continue;
         }
@@ -290,25 +306,34 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
             Iterator<EdgeData> edgeIter = g.edgeIter();
             JSONObject graph = new JSONObject();
             JSONArray edge_list = new JSONArray();
-            while (edgeIter.hasNext()) {
-                Edge current = (Edge) edgeIter.next();
-                JSONObject edge = new JSONObject();
-                edge.put("src", current.getSrc());
-                edge.put("w", current.getWeight());
-                edge.put("dest", current.getDest());
-                edge_list.add(edge);
+            try {
+                while (edgeIter.hasNext()) {
+                    Edge current = (Edge) edgeIter.next();
+                    JSONObject edge = new JSONObject();
+                    edge.put("src", current.getSrc());
+                    edge.put("w", current.getWeight());
+                    edge.put("dest", current.getDest());
+                    edge_list.add(edge);
+                }
+            }catch (ConcurrentModificationException e ){
+                throw new RuntimeException("The graph has been modified. Iterator not up to date.");
             }
             graph.put("Edges", edge_list);
             Iterator<NodeData> nodeIter = g.nodeIter();
             JSONArray node_list = new JSONArray();
-            while (nodeIter.hasNext()) {
-                Node current = (Node) nodeIter.next();
-                JSONObject node = new JSONObject();
-                String pos = current.getLocation().x() + ", " + current.getLocation().y() + ", " + current.getLocation().z();
-                node.put("pos", pos);
-                node.put("id", current.getKey());
-                node_list.add(node);
+            try {
+                while (nodeIter.hasNext()) {
+                    Node current = (Node) nodeIter.next();
+                    JSONObject node = new JSONObject();
+                    String pos = current.getLocation().x() + ", " + current.getLocation().y() + ", " + current.getLocation().z();
+                    node.put("pos", pos);
+                    node.put("id", current.getKey());
+                    node_list.add(node);
+                }
+            } catch (ConcurrentModificationException e) {
+                    throw new RuntimeException("The graph has been modified. Iterator not up to date.");
             }
+
             graph.put("Nodes", node_list);
             save.write(graph.toString(4));
             save.close();
