@@ -16,11 +16,7 @@ public class DWGraph implements DirectedWeightedGraph {
     private HashMap<Integer, HashMap<Integer, EdgeData>> edges_to_node = new HashMap<>();
 
 
-    //Iterator<Map.Entry<Integer, Edge>> edge_iterator =
-
-
-    public DWGraph() {
-    }
+    public DWGraph() {}
 
     // copy constructor
     public DWGraph(DWGraph g) {
