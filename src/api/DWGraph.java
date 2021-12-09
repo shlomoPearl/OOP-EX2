@@ -33,7 +33,7 @@ public class DWGraph implements DirectedWeightedGraph {
                 nodes_copy.put(current.getKey(), new Node(current));
             }
         } catch (ConcurrentModificationException e) {
-            throw new RuntimeException("The graph has been modified. Iterator not up to date.");
+            throw new RuntimeException("Graph has been modified during iteration. Iterator not up to date.");
         }
         HashMap<String, EdgeData> edges_copy = new HashMap<>();
         Iterator<EdgeData> edge_iterator = g.edgeIter();
@@ -43,7 +43,7 @@ public class DWGraph implements DirectedWeightedGraph {
                 edges_copy.put(tuple(current.getSrc(), current.getDest()), new Edge(current));
             }
         } catch (ConcurrentModificationException e) {
-            throw new RuntimeException("The graph has been modified. Iterator not up to date.");
+            throw new RuntimeException("Graph has been modified during iteration. Iterator not up to date.");
         }
 
         HashMap<Integer, HashMap<Integer, EdgeData>> edges_f_n_copy = new HashMap<>();
