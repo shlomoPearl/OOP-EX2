@@ -42,5 +42,6 @@ class GraphAlgorithmTest {
 
     @org.junit.jupiter.api.Test
     void load() {
+        g1
     }
 }
