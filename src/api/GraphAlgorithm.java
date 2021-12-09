@@ -27,7 +27,6 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     private String graph_change() {
         return "Graph has been modified during iteration. Iterator not up to date.";
-
     }
 
     private String edges_from_node_change() {
@@ -364,6 +363,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
             }
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
         return true;
     }
