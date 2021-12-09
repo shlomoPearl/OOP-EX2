@@ -281,7 +281,6 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         try {
             FileWriter save = new FileWriter(file);
             Iterator<EdgeData> edgeIter = g.edgeIter();
-//            Iterator<NodeData> nodeIter = g.nodeIter();
             JSONObject graph = new JSONObject();
             JSONArray edge_list = new JSONArray();
             while (edgeIter.hasNext()) {
@@ -294,7 +293,6 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
             }
             graph.put("Edges", edge_list);
             Iterator<NodeData> nodeIter = g.nodeIter();
-            JSONObject nodes = new JSONObject();
             JSONArray node_list = new JSONArray();
             while (nodeIter.hasNext()) {
                 Node current = (Node) nodeIter.next();
