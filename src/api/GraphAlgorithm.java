@@ -322,7 +322,6 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
             for (JsonElement json_node : node_list) {
                 int id = json_node.getAsJsonObject().get("id").getAsInt();
                 String[] geo_location = json_node.getAsJsonObject().get("pos").getAsString().split(",");
-                System.out.println(Arrays.toString(geo_location));
                 double x = Double.parseDouble(geo_location[0]);
                 double y = Double.parseDouble(geo_location[1]);
                 double z = Double.parseDouble(geo_location[2]);
