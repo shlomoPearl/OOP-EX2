@@ -1,14 +1,16 @@
 package api;
 
-import java.io.*;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.json.simple.JSONArray;
 import com.google.gson.JsonParser;
-import org.json.*;
+import org.json.JSONObject;
+import org.json.simple.JSONArray;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -42,23 +44,27 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         n.setTag(1);
         if (g.edgeIter(n.getKey()) != null) {
             Iterator<EdgeData> edgeIter = g.edgeIter(n.getKey());
-            while (edgeIter.hasNext()) {
-                Node next = (Node) g.getNode(edgeIter.next().getDest());
-                if (next.getTag() != 1) {
-                    dfs(g, next);
+            try {
+                while (edgeIter.hasNext()) {
+                    Node next = (Node) g.getNode(edgeIter.next().getDest());
+                    if (next.getTag() != 1) {
+                        dfs(g, next);
+                    }
                 }
+            } catch (ConcurrentModificationException e) {
+                throw new RuntimeException("The edges from a node have been modified during iteration upon its " +
+                        "outgoing edges. Iterator not up to date.");
             }
         }
         boolean result = true;
-
         Iterator<NodeData> nodeIter = g.nodeIter();
         try {
             while (nodeIter.hasNext()) {
                 Node current = (Node) nodeIter.next();
                 result = result && (current.getTag() == 1);
             }
-        }catch (ConcurrentModificationException e){
-            throw new RuntimeException("The graph has been changed. The iterator isn't up to date.");
+        } catch (ConcurrentModificationException e) {
+            throw new RuntimeException("Graph has been modified during iteration. Iterator not up to date.");
         }
         return result;
     }
@@ -92,29 +98,33 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     private void initialMax(HashMap<Integer, Node> hm, int src) {
         Iterator<Node> wIter = hm.values().iterator();
-        while (wIter.hasNext()) {
-            Node current = wIter.next();
-            if (current.getKey() != src) {
+        try {
+            while (wIter.hasNext()) {
+                Node current = wIter.next();
+                if (current.getKey() != src) {
 
-                current.setInWeight(Double.MAX_VALUE);
-            } else {
-                current.setInWeight(0);
+                    current.setInWeight(Double.MAX_VALUE);
+                } else {
+                    current.setInWeight(0);
+                }
             }
+        }catch (ConcurrentModificationException e){
+            throw new RuntimeException("Graph has been modified during iteration. Iterator not up to date.");
         }
     }
 
     private Node minWeight(HashMap<Integer, Node> hm) {
         Iterator<Node> hmIter = hm.values().iterator();
         Node ans = null;
-        if (hmIter.hasNext()) {
-            ans = hmIter.next();
-            while (hmIter.hasNext()) {
-                Node current = hmIter.next();
-                if (current.getInWeight() < ans.getInWeight()) {
-                    ans = current;
+            if (hmIter.hasNext()) {
+                ans = hmIter.next();
+                while (hmIter.hasNext()) {
+                    Node current = hmIter.next();
+                    if (current.getInWeight() < ans.getInWeight()) {
+                        ans = current;
+                    }
                 }
             }
-        }
         return ans;
     }
 
@@ -127,35 +137,43 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         HashMap<Integer, Node> unCheckedNode = new HashMap<>();
 
         Iterator<NodeData> nodeIter = g.nodeIter();
-        while (nodeIter.hasNext()) {
-            Node current = (Node) nodeIter.next();
-            unCheckedNode.put(current.getKey(), current);
+        try {
+            while (nodeIter.hasNext()) {
+                Node current = (Node) nodeIter.next();
+                unCheckedNode.put(current.getKey(), current);
+            }
+        }catch (ConcurrentModificationException e){
+            throw new RuntimeException("Graph has been modified during iteration. Iterator not up to date.");
         }
 
         initialMax(unCheckedNode, src);
-
         while (!unCheckedNode.isEmpty()) {
             Node currentNode = minWeight(unCheckedNode);
             unCheckedNode.remove(currentNode.getKey());
             if (g.edgeIter(currentNode.getKey()) != null) {
                 Iterator<EdgeData> edgeIterator = g.edgeIter(currentNode.getKey());
-                while (edgeIterator.hasNext()) {
-                    Edge currentEdge = (Edge) edgeIterator.next();
-                    Node nextNode = (Node) g.getNode(currentEdge.getDest());
-                    Node prevNode = (Node) g.getNode(currentEdge.getSrc());
-                    if (currentEdge.getWeight() + currentNode.getInWeight() < nextNode.getInWeight()) {
-                        nextNode.setInWeight(currentEdge.getWeight() + currentNode.getInWeight());
-                        nextNode.setKeyPrevNode(currentNode.getKey());
-                        if (nextNode.getKey() == dest) {
-                            ans.clear();
-                            ans.add(nextNode);
-                            while (prevNode.getKey() != src) {
-                                ans.addFirst(prevNode);
-                                prevNode = (Node) g.getNode(prevNode.getKeyPrevNode());
+                try {
+                    while (edgeIterator.hasNext()) {
+                        Edge currentEdge = (Edge) edgeIterator.next();
+                        Node nextNode = (Node) g.getNode(currentEdge.getDest());
+                        Node prevNode = (Node) g.getNode(currentEdge.getSrc());
+                        if (currentEdge.getWeight() + currentNode.getInWeight() < nextNode.getInWeight()) {
+                            nextNode.setInWeight(currentEdge.getWeight() + currentNode.getInWeight());
+                            nextNode.setKeyPrevNode(currentNode.getKey());
+                            if (nextNode.getKey() == dest) {
+                                ans.clear();
+                                ans.add(nextNode);
+                                while (prevNode.getKey() != src) {
+                                    ans.addFirst(prevNode);
+                                    prevNode = (Node) g.getNode(prevNode.getKeyPrevNode());
+                                }
+                                ans.addFirst((Node) g.getNode(src));
                             }
-                            ans.addFirst((Node) g.getNode(src));
                         }
                     }
+                }catch (ConcurrentModificationException e){
+                    throw new RuntimeException("The edges from a node have been modified during iteration upon its " +
+                            "outgoing edges. Iterator not up to date.");
                 }
             } else continue;
         }
