@@ -99,4 +99,9 @@ public class Node implements NodeData {
     public void setTag(int t) {
         this.tag = t;
     }
+
+    @Override
+    public String toString(){
+        return ""+this.getKey();
+    }
 }
