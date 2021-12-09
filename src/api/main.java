@@ -1,9 +1,12 @@
 package api;
 
+import javax.swing.*;
+import java.awt.*;
+import java.sql.Time;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.Timer;
 
 
 public class main {
@@ -59,10 +62,35 @@ public class main {
         graph2.connect(n3.getKey(), n2.getKey(), 5);
         graph2.connect(n3.getKey(), n1.getKey(), 5);
 
-        GraphAlgorithm g =new GraphAlgorithm();
-        g.init(graph2);
-        g.save("check.json");
+        GraphAlgorithm g = new GraphAlgorithm();
+        //g.init(graph2);
+        g.load("C:/Users/shlom/IdeaProjects/Ex2/check.json");
+        g.save("Dovi.json");
+        System.out.println(g.getGraph());
 
+
+//        GraphAlgorithm g =new GraphAlgorithm();
+//        g.init(graph2);
+//        g.save("check.json");
+//        g.load("C:/Users/shlom/Downloads/1000Nodes.json");
+//        double start =System.currentTimeMillis();
+//        //System.out.println(g.center().getKey());
+//        //System.out.println(g.isConnected());
+////        System.out.println(g.shortestPathDist(30, 70));
+////        System.out.println(g.shortestPath(30, 70));
+//        double finish = System.currentTimeMillis();
+//        int seconds = (int) ((finish - start)/1000);
+//        String time = seconds/60 + ":" + seconds % 60;
+//        System.out.println(time);
+//        System.out.println(g.shortestPath(1,223));
+//        System.out.println(g.shortestPathDist(1,223));
+
+        JLabel label = new JLabel();
+        label.setText("True");
+        label.setHorizontalTextPosition(JLabel.CENTER);
+        label.setVerticalTextPosition(JLabel.TOP);
+        label.setForeground(new Color(125,200,200));
+        label.setFont(new Font("MyFont",Font.PLAIN,20));
 
 
 //        GraphAlgorithm g1 =new GraphAlgorithm();

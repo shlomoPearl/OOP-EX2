@@ -143,9 +143,11 @@ class GraphAlgorithmTest {
         graph1.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G1.json");
         graph2.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G2.json");
         graph3.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G3.json");
+        graph4.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\1000Nodes.json");
         assertEquals(8,graph1.center().getKey());
         assertEquals(0,graph2.center().getKey());
         assertEquals(40,graph3.center().getKey());
+        //assertEquals();
     }
 
     @org.junit.jupiter.api.Test

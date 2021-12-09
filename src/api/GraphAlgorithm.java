@@ -18,8 +18,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
 
     private DirectedWeightedGraph g;
-//    private boolean[] visited1 = new boolean[g.nodeSize()];
-//    private boolean[] visited2 = new boolean[g.nodeSize()];
+
 
     public GraphAlgorithm() {
 
