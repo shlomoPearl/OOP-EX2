@@ -342,6 +342,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
             save.close();
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
         return true;
     }

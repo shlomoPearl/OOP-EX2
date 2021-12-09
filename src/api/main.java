@@ -19,8 +19,9 @@ public class main {
     }
 
     public static void main(String[] args) {
-        DWGraph graph1 = new DWGraph();
+
         DWGraph graph2 = new DWGraph();
+        DWGraph graph1 = new DWGraph();
         Node n1 = new Node(1, new Location(0, 0, 0));
         Node n2 = new Node(2, new Location(1, 1, 0));
         Node n3 = new Node(3, new Location(1, 1, 0));
