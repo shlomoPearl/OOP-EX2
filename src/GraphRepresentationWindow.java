@@ -1,4 +1,3 @@
-import api.DWGraph;
 import api.GraphAlgorithm;
 
 import javax.swing.*;
@@ -8,6 +7,7 @@ import java.awt.event.ActionListener;
 
 public class GraphRepresentationWindow extends JFrame implements ActionListener {
     ParameterWindow p;
+
     MenuItem loadButton = new MenuItem("Load Graph");
     MenuItem saveButton = new MenuItem("Save Graph");
     MenuItem addNodeButton = new MenuItem("Add Vertex");
@@ -22,7 +22,7 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener 
     MenuItem tspButton = new MenuItem("TSP");
     MenuItem getEdgeSize = new MenuItem("No. of Edges");
 
-    api.GraphAlgorithm graph;
+    api.GraphAlgorithm graph_algo;
 
     public GraphRepresentationWindow() {
         initFrame();
@@ -87,40 +87,40 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == saveButton) {
-            p = new ParameterWindow("s");
+            p = new ParameterWindow("s", this);
             p.setVisible(true);
         }
-        if (e.getSource() == loadButton) {
-            p = new ParameterWindow("l");
+        else if (e.getSource() == loadButton) {
+            p = new ParameterWindow("l", this);
             p.setVisible(true);
         }
-        if (e.getSource() == addNodeButton) {
-            p = new ParameterWindow("AN");
+        else if (e.getSource() == addNodeButton) {
+            p = new ParameterWindow("AN", this);
             p.setVisible(true);
         }
 
-        if (e.getSource() == connectButton) {
-            p = new ParameterWindow("c");
+        else if (e.getSource() == connectButton) {
+            p = new ParameterWindow("c", this);
             p.setVisible(true);
         }
-        if (e.getSource() == shortestPath) {
-            p = new ParameterWindow("SP");
+        else if (e.getSource() == shortestPath) {
+            p = new ParameterWindow("SP", this);
             p.setVisible(true);
         }
-        if (e.getSource() == shortestPathDist) {
-            p = new ParameterWindow("SPD");
+        else if (e.getSource() == shortestPathDist) {
+            p = new ParameterWindow("SPD", this);
             p.setVisible(true);
         }
-        if (e.getSource() == removeEdgeButton) {
-            p = new ParameterWindow("RE");
+        else if (e.getSource() == removeEdgeButton) {
+            p = new ParameterWindow("RE", this);
             p.setVisible(true);
         }
-        if (e.getSource() == removeNodeButton) {
-            p = new ParameterWindow("RN");
+        else if (e.getSource() == removeNodeButton) {
+            p = new ParameterWindow("RN", this);
             p.setVisible(true);
         }
-        if (e.getSource() == tspButton) {
-            p = new ParameterWindow("TSP");
+        else if (e.getSource() == tspButton) {
+            p = new ParameterWindow("TSP", this);
             p.setVisible(true);
         }
         if (e.getSource() == isConnected) {
@@ -137,14 +137,18 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener 
         }
     }
     public void save(String path){
-       graph.save(path);
-        System.out.println(graph.getGraph());
+       graph_algo.save(path);
+        System.out.println(graph_algo.getGraph());
     }
 
     protected void load(String path){
-        graph = new GraphAlgorithm();
-        graph.load(path);
-        System.out.println(graph.getGraph());
+        graph_algo = new GraphAlgorithm();
+        graph_algo.load(path);
+        System.out.println(graph_algo.getGraph());
+    }
+
+    public static void main(String[] args) {
+        new GraphRepresentationWindow();
     }
 
 

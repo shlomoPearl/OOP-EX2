@@ -62,11 +62,11 @@ public class main {
         graph2.connect(n3.getKey(), n2.getKey(), 5);
         graph2.connect(n3.getKey(), n1.getKey(), 5);
 
-        GraphAlgorithm g = new GraphAlgorithm();
-        //g.init(graph2);
-        g.load("C:/Users/shlom/IdeaProjects/Ex2/check.json");
-        g.save("Dovi.json");
-        System.out.println(g.getGraph());
+//        GraphAlgorithm g = new GraphAlgorithm();
+//        //g.init(graph2);
+//        g.load("C:/Users/shlom/IdeaProjects/Ex2/check.json");
+//        g.save("Dovi.json");
+//        System.out.println(g.getGraph());
 
 
 //        GraphAlgorithm g =new GraphAlgorithm();

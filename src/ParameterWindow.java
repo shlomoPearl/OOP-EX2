@@ -3,10 +3,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class ParameterWindow extends GraphRepresentationWindow implements ActionListener {
+public class ParameterWindow extends JFrame implements ActionListener {
+
     int width;
     int length;
+
     JTextField text = new JTextField();
+    GraphRepresentationWindow GRW;
+
     JButton saveButton = new JButton("Save");
     JButton loadButton = new JButton("Load");
     JButton SPButton = new JButton("Submit");
@@ -18,8 +22,8 @@ public class ParameterWindow extends GraphRepresentationWindow implements Action
     JButton TSPButton = new JButton("Submit");
 
 
-    public ParameterWindow(String flag){
-
+    public ParameterWindow(String flag, GraphRepresentationWindow GRW){
+        this.GRW = GRW;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
@@ -33,7 +37,7 @@ public class ParameterWindow extends GraphRepresentationWindow implements Action
             this.pack();
         }
 
-        if (flag.equals("l")){
+        else if (flag.equals("l")){
             this.setLayout(new FlowLayout());
             text.setPreferredSize(new Dimension(400,35));
             loadButton.addActionListener(this);
@@ -42,17 +46,16 @@ public class ParameterWindow extends GraphRepresentationWindow implements Action
             this.add(text);
             this.pack();
         }
-
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == saveButton){
-            super.save(text.getText());
+            GRW.save(text.getText());
             this.dispose();
         }
-        if (e.getSource() == loadButton){
-            super.load(text.getText());
+        else if (e.getSource() == loadButton){
+            GRW.load(text.getText());
             this.dispose();
         }
     }
