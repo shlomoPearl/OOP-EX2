@@ -17,7 +17,6 @@ class DWGraphTest {
     Node n5 = new Node(5, new Location(1, 1, 0));
     Node n6 = new Node(6, new Location(1, 1, 0));
 
-
     @Test
     void getNode() {
         graph1.addNode(n1);
@@ -65,6 +64,7 @@ class DWGraphTest {
 
     @Test
     void nodeIter() {
+
     }
 
     @Test

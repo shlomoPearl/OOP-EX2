@@ -222,4 +222,9 @@ public class DWGraph implements DirectedWeightedGraph {
     public int getMC() {
         return this.MC;
     }
+
+    @Override
+    public String toString(){
+        return edges.toString()+"\n"+nodes.toString();
+    }
 }
