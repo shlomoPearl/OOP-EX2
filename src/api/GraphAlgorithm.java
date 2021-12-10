@@ -20,9 +20,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     private DirectedWeightedGraph g;
 
 
-    public GraphAlgorithm() {
-
-    }
+    public GraphAlgorithm() {}
 
     private String graph_change() {
         return "Graph has been modified during iteration. Iterator not up to date.";
@@ -109,12 +107,9 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return -1;
     }
 
-    private void initialMax(HashMap<Integer, Node> hm, int src) {
-        Iterator<Node> wIter = hm.values().iterator();
-        while (wIter.hasNext()) {
-            Node current = wIter.next();
+    private void initialize_all_to_maxValue(HashMap<Integer, Node> hm, int src) {
+        for (Node current : hm.values()) {
             if (current.getKey() != src) {
-
                 current.setInWeight(Double.MAX_VALUE);
             } else {
                 current.setInWeight(0);
@@ -122,74 +117,84 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         }
     }
 
-    private Node minWeight(HashMap<Integer, Node> hm) {
-        Iterator<Node> hmIter = hm.values().iterator();
-        Node ans = null;
-        if (hmIter.hasNext()) {
-            ans = hmIter.next();
-            while (hmIter.hasNext()) {
-                Node current = hmIter.next();
-                if (current.getInWeight() < ans.getInWeight()) {
-                    ans = current;
+    private int node_with_min_weight(HashMap<Integer, Node> map) {
+        Node result = new Node(-1, null);
+        result.setInWeight(Double.MAX_VALUE);
+        if (!map.isEmpty()) {
+            for (Node current : map.values()) {
+                if (current.getInWeight() < result.getInWeight()) {
+                    result = current;
                 }
             }
         }
-        return ans;
+        return result.getKey();
     }
 
 
-    @Override
-    public List<NodeData> shortestPath(int src, int dest) {
+    private HashMap<Integer, Node> create_unCheckedNodes() {
 
-        HashMap<Integer, Node> unCheckedNode = new HashMap<>();
+        HashMap<Integer, Node> unCheckedNodes = new HashMap<>();
 
         Iterator<NodeData> nodeIter = g.nodeIter();
         try {
             while (nodeIter.hasNext()) {
                 Node current = (Node) nodeIter.next();
-                unCheckedNode.put(current.getKey(), current);
+                unCheckedNodes.put(current.getKey(), current);
             }
         } catch (ConcurrentModificationException e) {
             throw new RuntimeException(graph_change());
         }
+        return unCheckedNodes;
+    }
 
-        initialMax(unCheckedNode, src);
-        LinkedList<NodeData> ans = new LinkedList<>();
+    @Override
+    public List<NodeData> shortestPath(int src, int dest) {
+
+        HashMap<Integer, Node> unCheckedNodes = create_unCheckedNodes();
+        initialize_all_to_maxValue(unCheckedNodes, src);
+        LinkedList<NodeData> result = new LinkedList<>();
         if (src == dest) {
-            ans.add(g.getNode(src));
-            return ans;
+            result.add(g.getNode(src));
+            return result;
         }
 
-        while (!unCheckedNode.isEmpty()) {
-            Node currentNode = minWeight(unCheckedNode);
-            unCheckedNode.remove(currentNode.getKey());
-            if (g.edgeIter(currentNode.getKey()) != null) {
-                Iterator<EdgeData> edgeIterator = g.edgeIter(currentNode.getKey());
+        while (!unCheckedNodes.isEmpty()) {
+
+            int current_key = node_with_min_weight(unCheckedNodes);
+            Node current_node = (Node) g.getNode(current_key);
+            unCheckedNodes.remove(current_key);
+            if (g.edgeIter(current_key) != null) {
+                Iterator<EdgeData> edgeIterator = g.edgeIter(current_key);
                 try {
                     while (edgeIterator.hasNext()) {
+
                         Edge currentEdge = (Edge) edgeIterator.next();
+
                         Node nextNode = (Node) g.getNode(currentEdge.getDest());
                         Node prevNode = (Node) g.getNode(currentEdge.getSrc());
-                        if (currentEdge.getWeight() + currentNode.getInWeight() < nextNode.getInWeight()) {
-                            nextNode.setInWeight(currentEdge.getWeight() + currentNode.getInWeight());
-                            nextNode.setKeyPrevNode(currentNode.getKey());
+
+                        if (currentEdge.getWeight() + current_node.getInWeight() < nextNode.getInWeight()) {
+                            nextNode.setInWeight(currentEdge.getWeight() + current_node.getInWeight());
+                            nextNode.setKeyPrevNode(current_node.getKey());
+
                             if (nextNode.getKey() == dest) {
-                                ans.clear();
-                                ans.add(nextNode);
+                                result.clear();
+                                result.add(nextNode);
+
                                 while (prevNode.getKey() != src) {
-                                    ans.addFirst(prevNode);
+                                    result.addFirst(prevNode);
                                     prevNode = (Node) g.getNode(prevNode.getKeyPrevNode());
                                 }
-                                ans.addFirst((Node) g.getNode(src));
+                                result.addFirst(g.getNode(src));
                             }
                         }
                     }
                 } catch (ConcurrentModificationException e) {
                     throw new RuntimeException(edges_from_node_change());
                 }
-            } else continue;
+            }
         }
-        return (!ans.isEmpty()) ? ans : null;
+        return (!result.isEmpty()) ? result : null;
     }
 
 
@@ -197,17 +202,16 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     public NodeData center() {
         NodeData center = null;
         double min_max_dist = Double.MAX_VALUE;
-        double count;
         Iterator<NodeData> nodeIter1 = g.nodeIter();
         try {
             while (nodeIter1.hasNext()) {
                 Node current1 = (Node) nodeIter1.next();
-                shortestPath(current1.getKey());
+                shortestPathsForCenter(current1.getKey());
                 Iterator<NodeData> nodeIter2 = g.nodeIter();
                 double current_max_dist = Double.MIN_VALUE;
                 while (nodeIter2.hasNext()) {
                     Node current2 = (Node) nodeIter2.next();
-                    current_max_dist = (current2.getInWeight() > current_max_dist) ? current2.getInWeight() : current_max_dist;
+                    current_max_dist = Math.max(current2.getInWeight(), current_max_dist);
                 }
                 if (current_max_dist < min_max_dist) {
                     min_max_dist = current_max_dist;
@@ -220,110 +224,93 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return center;
     }
 
-    private void shortestPath(int src) {
-        HashMap<Integer, Node> unCheckedNode = new HashMap<>();
-        Iterator<NodeData> nodeIter = g.nodeIter();
-        try {
-            while (nodeIter.hasNext()) {
-                Node current = (Node) nodeIter.next();
-                unCheckedNode.put(current.getKey(), current);
-            }
-        } catch (ConcurrentModificationException e) {
-            throw new RuntimeException(graph_change());
-        }
-        initialMax(unCheckedNode, src);
+    private void shortestPathsForCenter(int source) {
 
-        while (!unCheckedNode.isEmpty()) {
-            Node currentNode = minWeight(unCheckedNode);
-            unCheckedNode.remove(currentNode.getKey());
-            if (g.edgeIter(currentNode.getKey()) != null) {
-                Iterator<EdgeData> edgeIterator = g.edgeIter(currentNode.getKey());
+        HashMap<Integer, Node> unCheckedNodes = create_unCheckedNodes();
+
+        initialize_all_to_maxValue(unCheckedNodes, source);
+
+        while (!unCheckedNodes.isEmpty()) {
+            int current_key = node_with_min_weight(unCheckedNodes);
+            Node current_node = (Node) g.getNode(current_key);
+            unCheckedNodes.remove(current_key);
+
+            if (g.edgeIter(current_key) != null) {
+                Iterator<EdgeData> edgeIterator = g.edgeIter(current_key);
                 try {
                     while (edgeIterator.hasNext()) {
                         Edge currentEdge = (Edge) edgeIterator.next();
                         Node nextNode = (Node) g.getNode(currentEdge.getDest());
-                        Node prevNode = (Node) g.getNode(currentEdge.getSrc());
-                        if (currentEdge.getWeight() + currentNode.getInWeight() < nextNode.getInWeight()) {
-                            nextNode.setInWeight(currentEdge.getWeight() + currentNode.getInWeight());
-                            nextNode.setKeyPrevNode(currentNode.getKey());
+
+                        if (currentEdge.getWeight() + current_node.getInWeight() < nextNode.getInWeight()) {
+                            nextNode.setInWeight(currentEdge.getWeight() + current_node.getInWeight());
+                            nextNode.setKeyPrevNode(current_key);
                         }
                     }
                 } catch (ConcurrentModificationException e) {
                     throw new RuntimeException(edges_from_node_change());
                 }
-            } else continue;
+            }
         }
     }
 
-    private double[] chooseStartNode(List<NodeData> unCheckNode) {
-        double[] temp = new double[3];
-        temp[2] = Double.MAX_VALUE;
-        for (int i = 0; i < unCheckNode.size(); i++) {
-            shortestPath(unCheckNode.get(i).getKey());
-            for (int j = 0; j < unCheckNode.size(); j++) {
-                if (i == j) continue;
-                if (((Node) (unCheckNode.get(j))).getInWeight() < temp[2]) {
-                    temp[0] = unCheckNode.get(i).getKey();
-                    temp[1] = unCheckNode.get(j).getKey();
-                    temp[2] = ((Node) (unCheckNode.get(j))).getInWeight();
+    private String chooseStartNodes(List<NodeData> unCheckedNodes) {
+        String pair = "";
+        double min_distance = Double.MAX_VALUE;
+        for (NodeData n : unCheckedNodes) {
+            shortestPathsForCenter(n.getKey());
+            for (NodeData m : unCheckedNodes) {
+                if (n.getKey() == m.getKey()) continue;
+                double current_in_weight = ((Node) m).getInWeight();
+                if (current_in_weight < min_distance) {
+                    min_distance = current_in_weight;
+                    pair = n.getKey() + "," + m.getKey();
                 }
             }
         }
-        return temp;
+        return pair;
     }
 
-    private double[] minWeight(List<NodeData> unCheckNode, int src) {
-        shortestPath(src);
-        double[] temp2 = new double[2];
-        temp2[1] = Double.MAX_VALUE;
-        for (int i = 0; i < unCheckNode.size(); i++) {
-            if (((Node) (unCheckNode.get(i))).getInWeight() < temp2[1]) {
-                temp2[0] = unCheckNode.get(i).getKey();
-                temp2[1] = ((Node) (unCheckNode.get(i))).getInWeight();
+    private int closest_node(List<NodeData> unCheckedNodes, int src) {
+        shortestPathsForCenter(src);
+        int result = src;
+        double min_weight = Double.MAX_VALUE;
+        for (NodeData nodeData : unCheckedNodes) {
+            if (((Node) nodeData).getInWeight() < min_weight) {
+                result = nodeData.getKey();
             }
         }
-        return temp2;
-    }
-
-    private void removeDupi(List<NodeData> list) {
-        for (int i = 0; i < list.size() - 1; i++) {
-            if (list.get(i).getKey() == list.get(i + 1).getKey()) {
-                list.remove(i);
-            }
-        }
+        return result;
     }
 
 
     @Override
     public List<NodeData> tsp(List<NodeData> cities) {
-        List<NodeData> ans = new ArrayList<>();
-        List<NodeData> unCheckNode = new LinkedList<>();
-        unCheckNode.addAll(cities);
 
-        double[] temp = chooseStartNode(unCheckNode);
-        int s, d;
-        s = (int) temp[0];
-        d = (int) temp[1];
-        ans.addAll(shortestPath(s, d));
-        for (int i = 0; i < ans.size(); i++) {
-            if (unCheckNode.contains(ans.get(i))) {
-                unCheckNode.remove(ans.get(i));
+        List<NodeData> unCheckedNodes = new LinkedList<>(cities);
+
+        String[] pair = chooseStartNodes(unCheckedNodes).split(",");
+        int source = Integer.parseInt(pair[0]);
+        int dest = Integer.parseInt(pair[1]);
+
+        List<NodeData> result = new ArrayList<>(shortestPath(source, dest));
+        for (NodeData node : result) {
+            unCheckedNodes.remove(node);
+        }
+
+        while (!unCheckedNodes.isEmpty()) {
+            int current_key = closest_node(unCheckedNodes, dest);
+            List<NodeData> path = shortestPath(dest, current_key);
+            path.remove(0);
+            result.addAll(path);
+            dest = current_key;
+            for (NodeData node : result) {
+                unCheckedNodes.remove(node);
             }
         }
-        while (!unCheckNode.isEmpty()) {
-            double[] minW = minWeight(unCheckNode, d);
-            ans.addAll((shortestPath(d, (int) minW[0])));
-            d = (int) minW[0];
-            for (int i = 0; i < ans.size(); i++) {
-                if (unCheckNode.contains(ans.get(i))) {
-                    unCheckNode.remove(ans.get(i));
-                }
-            }
-        }
-        removeDupi(ans);
-        if (ans != null) return ans;
-        return null;
+        return result;
     }
+
 
     @Override
     public boolean save(String file) {
@@ -366,6 +353,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return true;
     }
 
+
     @Override
     public boolean load(String file) {
         DWGraph loaded_graph = new DWGraph();
@@ -374,7 +362,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
             JsonObject graph = JsonParser.parseReader(new FileReader(file)).getAsJsonObject();
             JsonArray node_list = (JsonArray) graph.get("Nodes");
 
-            //craete nodes from node array in json and add to graph:
+            //create nodes from node array in json and add to graph:
             for (JsonElement json_node : node_list) {
                 int id = json_node.getAsJsonObject().get("id").getAsInt();
                 String[] geo_location = json_node.getAsJsonObject().get("pos").getAsString().split(",");
