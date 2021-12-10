@@ -52,7 +52,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     }
 
     /**
-     * @return deep copy of a directed weighted graph
+     * @return a deep copy of a directed weighted graph
      */
     @Override
     public DirectedWeightedGraph copy() {
@@ -61,11 +61,10 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     /**
      * recursive implementation of DFS algorithm
-     * returns: true if all vertices were visited - otherwise false
      *
      * @param graph      - the graph on which the DFS algorithm is to be preformed
      * @param start_node - the vertex to start the search from
-     * @return boolean
+     * @return true if all vertices were visited - otherwise false
      */
     private boolean dfs(DWGraph graph, Node start_node) {
         start_node.setTag(1);
@@ -75,15 +74,16 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
                 while (edgeIter.hasNext()) {
                     Node next = (Node) graph.getNode(edgeIter.next().getDest());
                     if (next.getTag() != 1) {
-                        dfs(graph, next);
+                        dfs(graph, next); // recursive call on "non-visited" neighbours
                     }
                 }
             } catch (ConcurrentModificationException e) {
                 throw new RuntimeException(edges_from_node_change());
             }
         }
-        boolean result = true;
 
+        // iterate and change result value to false if there exists a vertex that wasn't visited:
+        boolean result = true;
         Iterator<NodeData> nodeIter = graph.nodeIter();
         try {
             while (nodeIter.hasNext()) {
@@ -103,26 +103,31 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
      * then determines weather or not all vertices were visited via DFS "pass" over the graph after it was transposed
      * (i.e: directions of all edges have been flipped), while beginning the "pass" from the same vertex that the first
      * pass was started from. if in both cases all vertices were visited, the graph is connected.
-     * returns: true if the graph is connected and false otherwise.
      *
-     * @return boolean
+     * @return true if the graph is connected and false otherwise.
      */
     @Override
     public boolean isConnected() {
         Iterator<NodeData> nodeIter = g.nodeIter();
         try {
             if (nodeIter.hasNext()) {
+                // perform DFS on original graph
                 Node current = (Node) nodeIter.next();
                 int key = current.getKey();
-                boolean first_pass = dfs((DWGraph) g, current);
+                boolean first_pass = dfs((DWGraph) g, current); // true: if all vertices were visited.
+                                                                // false: otherwise
+
                 DWGraph transpose = ((DWGraph) g).transpose();
+                // reset tags for DFS pass on the transposed graph
                 Iterator<NodeData> transpose_iter = transpose.nodeIter();
                 while (transpose_iter.hasNext()) {
                     transpose_iter.next().setTag(0);
                 }
-                Node new_current = (Node) transpose.getNode(key);
-                boolean second_pass = dfs(transpose, new_current);
-                return first_pass && second_pass;
+
+                Node new_current = (Node) transpose.getNode(key); // beginning DFS from same vertex of initial pass
+                boolean second_pass = dfs(transpose, new_current); // true: if all vertices were visited.
+                                                                    // false: otherwise
+                return first_pass && second_pass; // both must be true for the graph to be declared a connected one
             }
         } catch (ConcurrentModificationException e) {
             throw new RuntimeException(graph_change());
@@ -133,11 +138,10 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     /**
      * in a directed weighted graph the sum of the weights of the edges which construct
      * the shortest path between two vertices, may be referred to as "distance to be travelled" between them.
-     * returns: the sum of the weights of the edges, over the shortest path between two vertices.
      *
      * @param src  - start node
      * @param dest - end (target) node
-     * @return double
+     * @return The sum of the weights of the edges, over the shortest path between two vertices.
      */
     @Override
     public double shortestPathDist(int src, int dest) {
@@ -160,11 +164,10 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     /**
      * assists the "shortest path" functions.
-     * returns: the key of the node with the smallest in-weight out of the nodes from the given map,
-     * if said map is empty - returns -1
      *
      * @param map - a collection of vertices stored in a map (key : value)
-     * @return int
+     * @return the key of the node with the smallest in-weight out of the nodes from the given map,
+     * if said map is empty - returns -1
      */
     private int node_with_min_weight(HashMap<Integer, Node> map) {
         Node result = new Node(-1, null);
@@ -200,11 +203,10 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     /**
      * a certain variation of the well known Dijkstra algorithm, which can be used to find the shortest path between
      * two vertices on a weighted graph.
-     * returns: a list of all the vertices on said path, in travelling order.
      *
      * @param src  - start node
      * @param dest - end (target) node
-     * @return List<NodeData>
+     * @return a list of all the vertices on said path, in travelling order.
      */
     @Override
     public List<NodeData> shortestPath(int src, int dest) {
@@ -264,48 +266,60 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     }
 
     /**
-     * a void function designed to update the in-weight variables of all vertices in
-     * the graph, to their shortest path distance, relative to a given source vertex.
+     * a function designed to update the in-weight variables of all vertices in
+     * the graph, to their shortest path distance, relative to a given source vertex,
+     * and then returns the largest of said in-weight variables.
      *
      * @param source - the key of the source vertex
+     * @return The largest in-weight (distance from source) out of all the vertices,
+     * relative to the source vertex.
      */
-    private void shortestPathsForCenter(int source) {
+    private double shortestPathsForCenter(int source) {
 
         HashMap<Integer, Node> unCheckedNodes = create_unCheckedNodes();
+        initialize_all_to_maxValue(unCheckedNodes, source); // this func. initializes the source vertex in-weight to 0,
+                                                            // while all the other in weights are initialized to +infinity
+        double max_shortest_path = Double.MIN_VALUE;
+        try {
+            while (!unCheckedNodes.isEmpty()) {
+                // in first iteration: current_key will be the source
+                // in the second iteration: current_key will be the sources neighbour with the smallest in-weight
+                // ans so on..
+                int current_key = node_with_min_weight(unCheckedNodes);
+                Node current_node = (Node) g.getNode(current_key);
+                unCheckedNodes.remove(current_key);
 
-        initialize_all_to_maxValue(unCheckedNodes, source);
-
-        while (!unCheckedNodes.isEmpty()) {
-
-            int current_key = node_with_min_weight(unCheckedNodes);
-            Node current_node = (Node) g.getNode(current_key);
-            unCheckedNodes.remove(current_key);
-
-            if (g.edgeIter(current_key) != null) {
-                Iterator<EdgeData> edgeIterator = g.edgeIter(current_key);
-                try {
+                if (g.edgeIter(current_key) != null) {
+                    // iterating over neighbours using the out-going edges map:
+                    Iterator<EdgeData> edgeIterator = g.edgeIter(current_key);
                     while (edgeIterator.hasNext()) {
                         Edge currentEdge = (Edge) edgeIterator.next();
                         Node nextNode = (Node) g.getNode(currentEdge.getDest());
-
+                        // updating in-weights to the smallest possible value (there might be a few ways to get from a to b)
                         if (currentEdge.getWeight() + current_node.getInWeight() < nextNode.getInWeight()) {
                             nextNode.setInWeight(currentEdge.getWeight() + current_node.getInWeight());
-                            nextNode.setKeyPrevNode(current_key);
                         }
                     }
-                } catch (ConcurrentModificationException e) {
-                    throw new RuntimeException(edges_from_node_change());
                 }
             }
+            // iterating over all nodes, saving and returning the maximum shortest path distance from source
+            Iterator<NodeData> node_iterator = g.nodeIter();
+            while (node_iterator.hasNext()) {
+                max_shortest_path = Math.max(max_shortest_path, ((Node) node_iterator.next()).getInWeight());
+            }
+        } catch (ConcurrentModificationException e) {
+            throw new RuntimeException(edges_from_node_change());
         }
+        return max_shortest_path;
     }
 
     /**
      * the center of a directed weighted graph is defined as follows: the vertex which has the smallest maximum
      * distance from all other nodes. where distance is defined to be the shortest path distance.
-     * this function calculates and returns said vertex
+     * this function calculates said vertex.
+     * this func. assumes the graph is connected.
      *
-     * @return NodeData
+     * @return the center of a connected directed weighted graph
      */
     @Override
     public NodeData center() {
@@ -314,17 +328,11 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         Iterator<NodeData> node_iter = g.nodeIter();
         try {
             while (node_iter.hasNext()) {
-                Node current1 = (Node) node_iter.next();
-                shortestPathsForCenter(current1.getKey());
-                Iterator<NodeData> nodeIter2 = g.nodeIter();
-                double current_max_dist = Double.MIN_VALUE;
-                while (nodeIter2.hasNext()) {
-                    Node current2 = (Node) nodeIter2.next();
-                    current_max_dist = Math.max(current2.getInWeight(), current_max_dist);
-                }
-                if (current_max_dist < min_max_dist) {
-                    min_max_dist = current_max_dist;
-                    center = current1;
+                Node current = (Node) node_iter.next();
+                double current_node_max_shortest_path = shortestPathsForCenter(current.getKey());
+                if (current_node_max_shortest_path < min_max_dist) {
+                    min_max_dist = current_node_max_shortest_path;
+                    center = current;
                 }
             }
         } catch (ConcurrentModificationException e) {
@@ -337,10 +345,9 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
      * assists the isConnected func. by returning a pair of vertices out of a given collection, which
      * are the two closest two each other (meaning they are the two with the shortest path distance between
      * them, out of all possible pairs from the given collection).
-     * returns: a String representation of the keys of the pair of vertices. Later to be parsed by the isConnected func.
      *
      * @param unCheckedNodes - a list of vertices
-     * @return String
+     * @return a String representation of the keys of the pair of vertices. Later to be parsed by the isConnected func.
      */
     private String chooseStartNodes(List<NodeData> unCheckedNodes) {
         String pair = "";
@@ -363,11 +370,10 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     /**
      * assists the isConnected func. by returning the vertex, out of a given collection, which
      * has the shortest path distance from a given source vertex.
-     * returns: the key (ID) of said vertex.
      *
      * @param unCheckedNodes - a list of vertices
      * @param src            - the key of the source vertex
-     * @return int
+     * @return the key (ID) of said vertex.
      */
     private int closest_node(List<NodeData> unCheckedNodes, int src) {
         shortestPathsForCenter(src); // updates the in-weight variables relative to source
@@ -389,11 +395,10 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
      * passes through certain cities (vertices on the graph) from a given list. each city must be visited only
      * once, and travelling through "other" cities (i.e: through vertices which are not from the
      * original given collection) is permitted.
-     * returns: a list of vertices, representing the "cheapest" route through all cities from the given
-     * collection, in the order in which said vertices were to be passed when travelling on said route.
      *
      * @param cities - a list of vertices representing cities to be visited
-     * @return List</ NodeData>
+     * @return a list of vertices, representing the "cheapest" route through all cities from the given collection,
+     * in the order in which said vertices were to be passed when travelling on said route.
      */
     @Override
     public List<NodeData> tsp(List<NodeData> cities) {
@@ -416,7 +421,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
             int current_key = closest_node(unCheckedNodes, dest); // find closest to last vertex on current leg
             List<NodeData> path = shortestPath(dest, current_key); // create the path between the two
             path.remove(0);     // remove the dest from the path list
-                                        // in order to prevent duplicates
+            // in order to prevent duplicates
             result.addAll(path); // add path to existing leg
             dest = current_key; // update dest
 
@@ -432,10 +437,9 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     /**
      * this func. saves the graph object in pretty JSON format, in a JSON file which
      * is then stored in the directory represented by the given path, under the given file name.
-     * returns: true if the save was successful - otherwise false.
      *
      * @param file - the file name (may include a relative path).
-     * @return boolean
+     * @return true if the save was successful - otherwise false.
      */
     @Override
     public boolean save(String file) {
@@ -494,10 +498,9 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     /**
      * this func. loads the graph object from a JSON file from a given directory,
      * represented by a path String and file name.
-     * returns: true if load was successful - otherwise false.
      *
      * @param file - the file name (may include a relative path).
-     * @return boolean
+     * @return true if load was successful - otherwise false.
      */
     @Override
     public boolean load(String file) {
