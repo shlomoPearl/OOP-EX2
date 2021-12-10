@@ -284,7 +284,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
             while (!unCheckedNodes.isEmpty()) {
                 // in first iteration: current_key will be the source
                 // in the second iteration: current_key will be the sources neighbour with the smallest in-weight
-                // ans so on..
+                // and so on..
                 int current_key = node_with_min_weight(unCheckedNodes);
                 Node current_node = (Node) g.getNode(current_key);
                 unCheckedNodes.remove(current_key);
