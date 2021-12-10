@@ -61,8 +61,8 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     /**
      * recursive implementation of DFS algorithm
      * returns: true if all vertices were visited - otherwise false
-     * @param graph
-     * @param start_node
+     * @param graph - the graph on which the DFS algorithm is to be preformed
+     * @param start_node - the vertex to start the search from
      * @return boolean
      */
     private boolean dfs(DWGraph graph, Node start_node) {
@@ -158,7 +158,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
      * assists the "shortest path" functions.
      * returns: the key of the node with the smallest in-weight out of the nodes from the given map,
      * if said map is empty - returns -1
-     * @param map
+     * @param map - a collection of vertices stored in a map (key : value)
      * @return int
      */
     private int node_with_min_weight(HashMap<Integer, Node> map) {
@@ -260,7 +260,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     /**
      * a void function designed to update the in-weight variables of all vertices in
      * the graph, to their shortest path distance, relative to a given source vertex.
-     * @param source
+     * @param source - the key of the source vertex
      */
     private void shortestPathsForCenter(int source) {
 
@@ -329,7 +329,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
      * are the two closest two each other (meaning they are the two with the shortest path distance between
      * them, out of all possible pairs from the given collection).
      * returns: a String representation of the keys of the pair of vertices. Later to be parsed by the isConnected func.
-     * @param unCheckedNodes
+     * @param unCheckedNodes - a list of vertices
      * @return String
      */
     private String chooseStartNodes(List<NodeData> unCheckedNodes) {
@@ -353,7 +353,8 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
      * assists the isConnected func. by returning the vertex, out of a given collection, which
      * has the shortest path distance from a given source vertex.
      * returns: the key (ID) of said vertex.
-     * @param unCheckedNodes
+     * @param unCheckedNodes - a list of vertices
+     * @param src - the key of the source vertex
      * @return int
      */
     private int closest_node(List<NodeData> unCheckedNodes, int src) {
@@ -377,7 +378,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
      * original given collection) is permitted.
      * returns: a list of vertices, representing the "cheapest" route through all cities from the given
      * collection, in the order in which said vertices were to be passed when travelling on said route.
-     * @param cities
+     * @param cities - a list of vertices representing cities to be visited
      * @return List</NodeData>
      */
     @Override
