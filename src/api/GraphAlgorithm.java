@@ -22,14 +22,23 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     public GraphAlgorithm() {}
 
+    /**
+     * @return message to be displayed in a Runtime exception thrown due to changes made during iteration
+     */
     private String graph_change() {
         return "Graph has been modified during iteration. Iterator not up to date.";
     }
 
+
+    /**
+     * @return message to be displayed in a Runtime exception thrown due to changes made during iteration
+     * over edges out-going from a specific vertex
+     */
     private String edges_from_node_change() {
         return "Out-going edges of a certain node have been" +
                 " modified during iteration over them. Iterator not up to date.";
     }
+
 
     @Override
     public void init(DirectedWeightedGraph g) {
@@ -41,21 +50,30 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return this.g;
     }
 
+    /**
+     * @return deep copy of a directed weighted graph
+     */
     @Override
     public DirectedWeightedGraph copy() {
         return new DWGraph((DWGraph) this.g);
     }
 
-
-    private boolean dfs(DWGraph g, Node n) {
-        n.setTag(1);
-        if (g.edgeIter(n.getKey()) != null) {
-            Iterator<EdgeData> edgeIter = g.edgeIter(n.getKey());
+    /**
+     * recursive implementation of DFS algorithm
+     * returns: true if all vertices were visited - otherwise false
+     * @param graph
+     * @param start_node
+     * @return boolean
+     */
+    private boolean dfs(DWGraph graph, Node start_node) {
+        start_node.setTag(1);
+        if (graph.edgeIter(start_node.getKey()) != null) {
+            Iterator<EdgeData> edgeIter = graph.edgeIter(start_node.getKey());
             try {
                 while (edgeIter.hasNext()) {
-                    Node next = (Node) g.getNode(edgeIter.next().getDest());
+                    Node next = (Node) graph.getNode(edgeIter.next().getDest());
                     if (next.getTag() != 1) {
-                        dfs(g, next);
+                        dfs(graph, next);
                     }
                 }
             } catch (ConcurrentModificationException e) {
@@ -64,7 +82,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         }
         boolean result = true;
 
-        Iterator<NodeData> nodeIter = g.nodeIter();
+        Iterator<NodeData> nodeIter = graph.nodeIter();
         try {
             while (nodeIter.hasNext()) {
                 Node current = (Node) nodeIter.next();
@@ -76,6 +94,16 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return result;
     }
 
+    /**
+     * a connected directed weighted graph is defined: there exist a path between any two
+     * given vertices from the graph.
+     * implementation: determines weather or not all vertices were visited via DFS "pass" over the graph.
+     * then determines weather or not all vertices were visited via DFS "pass" over the graph after it was transposed
+     * (i.e: directions of all edges have been flipped), while beginning the "pass" from the same vertex that the first
+     * pass was started from. if in both cases all vertices were visited, the graph is connected.
+     * returns: true if the graph is connected and false otherwise.
+     * @return boolean
+     */
     @Override
     public boolean isConnected() {
         Iterator<NodeData> nodeIter = g.nodeIter();
@@ -99,6 +127,14 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return true;
     }
 
+    /**
+     * in a directed weighted graph the sum of the weights of the edges which construct
+     * the shortest path between two vertices, may be referred to as "distance to be travelled" between them.
+     * returns: the sum of the weights of the edges, over the shortest path between two vertices.
+     * @param src - start node
+     * @param dest - end (target) node
+     * @return double
+     */
     @Override
     public double shortestPathDist(int src, int dest) {
         if (shortestPath(src, dest) != null) {
@@ -107,6 +143,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return -1;
     }
 
+    // assists the "shortest path" functions.
     private void initialize_all_to_maxValue(HashMap<Integer, Node> hm, int src) {
         for (Node current : hm.values()) {
             if (current.getKey() != src) {
@@ -117,6 +154,13 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         }
     }
 
+    /**
+     * assists the "shortest path" functions.
+     * returns: the key of the node with the smallest in-weight out of the nodes from the given map,
+     * if said map is empty - returns -1
+     * @param map
+     * @return int
+     */
     private int node_with_min_weight(HashMap<Integer, Node> map) {
         Node result = new Node(-1, null);
         result.setInWeight(Double.MAX_VALUE);
@@ -130,6 +174,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return result.getKey();
     }
 
+    // assists the "shortest path" functions.
 
     private HashMap<Integer, Node> create_unCheckedNodes() {
 
@@ -147,13 +192,22 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return unCheckedNodes;
     }
 
+    /**
+     * a certain variation of the well known Dijkstra algorithm, which can be used to find the shortest path between
+     * two vertices on a weighted graph.
+     * returns: a list of all the vertices on said path, in travelling order.
+     * @param src - start node
+     * @param dest - end (target) node
+     * @return List<NodeData>
+     */
     @Override
     public List<NodeData> shortestPath(int src, int dest) {
 
         HashMap<Integer, Node> unCheckedNodes = create_unCheckedNodes();
         initialize_all_to_maxValue(unCheckedNodes, src);
         LinkedList<NodeData> result = new LinkedList<>();
-        if (src == dest) {
+
+        if (src == dest) { // the path is from the source to itself
             result.add(g.getNode(src));
             return result;
         }
@@ -163,6 +217,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
             int current_key = node_with_min_weight(unCheckedNodes);
             Node current_node = (Node) g.getNode(current_key);
             unCheckedNodes.remove(current_key);
+
             if (g.edgeIter(current_key) != null) {
                 Iterator<EdgeData> edgeIterator = g.edgeIter(current_key);
                 try {
@@ -174,13 +229,18 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
                         Node prevNode = (Node) g.getNode(currentEdge.getSrc());
 
                         if (currentEdge.getWeight() + current_node.getInWeight() < nextNode.getInWeight()) {
+                            // we have found a shorter path to the nexNode, than the last time we encountered it:
+                            //set nextNode's new in-weight
                             nextNode.setInWeight(currentEdge.getWeight() + current_node.getInWeight());
-                            nextNode.setKeyPrevNode(current_node.getKey());
+                            nextNode.setKeyPrevNode(current_node.getKey()); //update its prevNode variable
+                            // (prevNode is for reverse reconstructing the shortest path route)
 
                             if (nextNode.getKey() == dest) {
+                                // we have reached the target
                                 result.clear();
                                 result.add(nextNode);
 
+                                // reverse reconstruct path
                                 while (prevNode.getKey() != src) {
                                     result.addFirst(prevNode);
                                     prevNode = (Node) g.getNode(prevNode.getKeyPrevNode());
@@ -197,33 +257,11 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return (!result.isEmpty()) ? result : null;
     }
 
-
-    @Override
-    public NodeData center() {
-        NodeData center = null;
-        double min_max_dist = Double.MAX_VALUE;
-        Iterator<NodeData> nodeIter1 = g.nodeIter();
-        try {
-            while (nodeIter1.hasNext()) {
-                Node current1 = (Node) nodeIter1.next();
-                shortestPathsForCenter(current1.getKey());
-                Iterator<NodeData> nodeIter2 = g.nodeIter();
-                double current_max_dist = Double.MIN_VALUE;
-                while (nodeIter2.hasNext()) {
-                    Node current2 = (Node) nodeIter2.next();
-                    current_max_dist = Math.max(current2.getInWeight(), current_max_dist);
-                }
-                if (current_max_dist < min_max_dist) {
-                    min_max_dist = current_max_dist;
-                    center = current1;
-                }
-            }
-        } catch (ConcurrentModificationException e) {
-            throw new RuntimeException(graph_change());
-        }
-        return center;
-    }
-
+    /**
+     * a void function designed to update the in-weight variables of all vertices in
+     * the graph, to their shortest path distance, relative to a given source vertex.
+     * @param source
+     */
     private void shortestPathsForCenter(int source) {
 
         HashMap<Integer, Node> unCheckedNodes = create_unCheckedNodes();
@@ -254,6 +292,46 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         }
     }
 
+    /**
+     * the center of a directed weighted graph is defined as follows: the vertex which has the smallest maximum
+     * distance from all other nodes. where distance is defined to be the shortest path distance.
+     * this function calculates and returns said vertex
+     * @return NodeData
+     */
+    @Override
+    public NodeData center() {
+        NodeData center = null;
+        double min_max_dist = Double.MAX_VALUE;
+        Iterator<NodeData> nodeIter1 = g.nodeIter();
+        try {
+            while (nodeIter1.hasNext()) {
+                Node current1 = (Node) nodeIter1.next();
+                shortestPathsForCenter(current1.getKey());
+                Iterator<NodeData> nodeIter2 = g.nodeIter();
+                double current_max_dist = Double.MIN_VALUE;
+                while (nodeIter2.hasNext()) {
+                    Node current2 = (Node) nodeIter2.next();
+                    current_max_dist = Math.max(current2.getInWeight(), current_max_dist);
+                }
+                if (current_max_dist < min_max_dist) {
+                    min_max_dist = current_max_dist;
+                    center = current1;
+                }
+            }
+        } catch (ConcurrentModificationException e) {
+            throw new RuntimeException(graph_change());
+        }
+        return center;
+    }
+
+    /**
+     * assists the isConnected func. by returning a pair of vertices out of a given collection, which
+     * are the two closest two each other (meaning they are the two with the shortest path distance between
+     * them, out of all possible pairs from the given collection).
+     * returns: a String representation of the keys of the pair of vertices. Later to be parsed by the isConnected func.
+     * @param unCheckedNodes
+     * @return String
+     */
     private String chooseStartNodes(List<NodeData> unCheckedNodes) {
         String pair = "";
         double min_distance = Double.MAX_VALUE;
@@ -271,6 +349,13 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return pair;
     }
 
+    /**
+     * assists the isConnected func. by returning the vertex, out of a given collection, which
+     * has the shortest path distance from a given source vertex.
+     * returns: the key (ID) of said vertex.
+     * @param unCheckedNodes
+     * @return int
+     */
     private int closest_node(List<NodeData> unCheckedNodes, int src) {
         shortestPathsForCenter(src);
         int result = src;
@@ -283,7 +368,18 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return result;
     }
 
-
+    /**
+     * a func. to solve a lenient variation of the well known problem from the field og mathematics
+     * and computer sciences: The Travelling Salesman Problem.
+     * This is a greedy algorithm which calculates the shortest ("cheapest") route which
+     * passes through certain cities (vertices on the graph) from a given list. each city must be visited only
+     * once, and travelling through "other" cities (i.e: through vertices which are not from the
+     * original given collection) is permitted.
+     * returns: a list of vertices, representing the "cheapest" route through all cities from the given
+     * collection, in the order in which said vertices were to be passed when travelling on said route.
+     * @param cities
+     * @return List</NodeData>
+     */
     @Override
     public List<NodeData> tsp(List<NodeData> cities) {
 
@@ -311,7 +407,13 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return result;
     }
 
-
+    /**
+     * this func. saves the graph object in pretty JSON format, in a JSON file which
+     * is then stored in the directory represented by the given path, under the given file name.
+     * returns: true if the save was successful - otherwise false.
+     * @param file - the file name (may include a relative path).
+     * @return boolean
+     */
     @Override
     public boolean save(String file) {
         if (null == g) return false;
@@ -354,6 +456,13 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     }
 
 
+    /**
+     * this func. loads the graph object from a JSON file from a given directory,
+     * represented by a path String and file name.
+     * returns: true if load was successful - otherwise false.
+     * @param file - the file name (may include a relative path).
+     * @return boolean
+     */
     @Override
     public boolean load(String file) {
         DWGraph loaded_graph = new DWGraph();
