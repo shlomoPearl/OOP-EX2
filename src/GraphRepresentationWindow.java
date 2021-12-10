@@ -123,16 +123,16 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener 
             p = new ParameterWindow("TSP", this);
             p.setVisible(true);
         }
-        if (e.getSource() == isConnected) {
+        else if (e.getSource() == isConnected) {
 
         }
-        if (e.getSource() == getEdgeSize) {
+        else if (e.getSource() == getEdgeSize) {
 
         }
-        if (e.getSource() == getNodeSize) {
+        else if (e.getSource() == getNodeSize) {
 
         }
-        if (e.getSource() == center) {
+        else if (e.getSource() == center) {
 
         }
     }

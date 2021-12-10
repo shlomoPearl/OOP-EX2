@@ -327,42 +327,41 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
     @Override
     public boolean save(String file) {
-        try {
+        if (null == g) return false;
+        else try {
             FileWriter save = new FileWriter(file);
             Iterator<EdgeData> edgeIter = g.edgeIter();
             JSONObject graph = new JSONObject();
             JSONArray edge_list = new JSONArray();
-            try {
-                while (edgeIter.hasNext()) {
-                    Edge current = (Edge) edgeIter.next();
-                    JSONObject edge = new JSONObject();
-                    edge.put("src", current.getSrc());
-                    edge.put("w", current.getWeight());
-                    edge.put("dest", current.getDest());
-                    edge_list.add(edge);
-                }
-                graph.put("Edges", edge_list);
-                Iterator<NodeData> nodeIter = g.nodeIter();
-                JSONArray node_list = new JSONArray();
 
-                while (nodeIter.hasNext()) {
-                    Node current = (Node) nodeIter.next();
-                    JSONObject node = new JSONObject();
-                    String pos = current.getLocation().x() + ", " + current.getLocation().y() + ", " + current.getLocation().z();
-                    node.put("pos", pos);
-                    node.put("id", current.getKey());
-                    node_list.add(node);
-                }
+            while (edgeIter.hasNext()) {
+                Edge current = (Edge) edgeIter.next();
+                JSONObject edge = new JSONObject();
+                edge.put("src", current.getSrc());
+                edge.put("w", current.getWeight());
+                edge.put("dest", current.getDest());
+                edge_list.add(edge);
+            }
 
+            graph.put("Edges", edge_list);
+            Iterator<NodeData> nodeIter = g.nodeIter();
+            JSONArray node_list = new JSONArray();
+
+            while (nodeIter.hasNext()) {
+                Node current = (Node) nodeIter.next();
+                JSONObject node = new JSONObject();
+                String pos = current.getLocation().x() + ", " + current.getLocation().y() + ", " + current.getLocation().z();
+                node.put("pos", pos);
+                node.put("id", current.getKey());
+                node_list.add(node);
                 graph.put("Nodes", node_list);
                 save.write(graph.toString(4));
                 save.close();
-            } catch (ConcurrentModificationException e) {
-                throw new RuntimeException(graph_change());
             }
+        } catch (ConcurrentModificationException e) {
+            throw new RuntimeException(graph_change());
         } catch (IOException e) {
             e.printStackTrace();
-            return false;
         }
         return true;
     }
@@ -374,6 +373,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
             //initiate new graph
             JsonObject graph = JsonParser.parseReader(new FileReader(file)).getAsJsonObject();
             JsonArray node_list = (JsonArray) graph.get("Nodes");
+
             //craete nodes from node array in json and add to graph:
             for (JsonElement json_node : node_list) {
                 int id = json_node.getAsJsonObject().get("id").getAsInt();
@@ -392,12 +392,12 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
                 double w = json_edge.getAsJsonObject().get("w").getAsDouble();
                 loaded_graph.connect(src, dest, w);
             }
-            //update g:
-            g = loaded_graph;
-            return true;
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return false;
         }
+        //update g:
+        g = loaded_graph;
+        return true;
     }
 }
