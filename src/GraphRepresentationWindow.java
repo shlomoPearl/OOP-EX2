@@ -127,14 +127,24 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
             p.setVisible(true);
 
         } else if (e.getSource() == isConnected) {
-            response.setBounds(500, 400, response.getPreferredSize().width, response.HEIGHT);
-            response.setFont(new Font("ComicSans", Font.BOLD, 70));
+            String T = "Yay! The Graph is Connected!";
+            String F = "Nope! Not Connected... Sorry :-(";
+            String answer = (graph_algo.isConnected()) ? T : F;
+            response.setText(answer);
+            response.setBounds(500, 40, response.getPreferredSize().width, response.HEIGHT);
+            response.setFont(new Font("ComicSans", Font.BOLD, 50));
             response.setVisible(true);
             this.add(response);
 
 
         } else if (e.getSource() == getEdgeSize) {
-
+            int edge_size = graph_algo.getGraph().edgeSize();
+            String answer = ("There are " + edge_size + " Edges in this graph");
+            response.setText(answer);
+            response.setBounds(500, 40, response.getPreferredSize().width, response.HEIGHT);
+            response.setFont(new Font("ComicSans", Font.BOLD, 50));
+            response.setVisible(true);
+            this.add(response);
 
         } else if (e.getSource() == getNodeSize) {
 
