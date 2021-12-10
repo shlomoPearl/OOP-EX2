@@ -35,7 +35,7 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
         this.setLayout(new FlowLayout());
         this.setTitle("Directed Weighted Graph Representation");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1000, 800);
+        this.setBounds(380, 80, 800, 600);
         this.setVisible(true);
     }
 
@@ -87,12 +87,15 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        JLabel response = new JLabel("");
+
         if (e.getSource() == saveButton) {
             p = new ParameterWindow("s", this);
             p.setVisible(true);
 
         } else if (e.getSource() == loadButton) {
             p = new ParameterWindow("l", this);
+            p.setBounds(380, 80, 550, 80);
             p.setVisible(true);
 
         } else if (e.getSource() == addNodeButton) {
@@ -124,15 +127,17 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
             p.setVisible(true);
 
         } else if (e.getSource() == isConnected) {
-            JLabel answer = new JLabel(String.valueOf(graph_algo.isConnected()));
-            answer.setFont(new Font("ComicSans", Font.BOLD, 70));
-            answer.setBounds(500, 400, answer.getPreferredSize().width, answer.HEIGHT);
-            this.add(answer);
+            response.setBounds(500, 400, response.getPreferredSize().width, response.HEIGHT);
+            response.setFont(new Font("ComicSans", Font.BOLD, 70));
+            response.setVisible(true);
+            this.add(response);
 
 
         } else if (e.getSource() == getEdgeSize) {
 
+
         } else if (e.getSource() == getNodeSize) {
+
 
         } else if (e.getSource() == center) {
 
