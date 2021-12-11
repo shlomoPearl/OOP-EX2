@@ -60,25 +60,30 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     }
 
     /**
-     * recursive implementation of DFS algorithm
+     * iterative implementation of DFS algorithm designed only to "color" vertices as "visited"
      *
      * @param graph      - the graph on which the DFS algorithm is to be preformed
      * @param start_node - the vertex to start the search from
      * @return true if all vertices were visited - otherwise false
      */
     private boolean dfs(DWGraph graph, Node start_node) {
-        start_node.setTag(1);
-        if (graph.edgeIter(start_node.getKey()) != null) {
-            Iterator<EdgeData> edgeIter = graph.edgeIter(start_node.getKey());
-            try {
-                while (edgeIter.hasNext()) {
-                    Node next = (Node) graph.getNode(edgeIter.next().getDest());
-                    if (next.getTag() != 1) {
-                        dfs(graph, next); // recursive call on "non-visited" neighbours
+        Stack<Node> not_visited = new Stack<>();
+        not_visited.add(start_node);
+        while (!not_visited.isEmpty()) {
+            Node current = not_visited.pop();
+            current.setTag(1);
+            if (graph.edgeIter(current.getKey()) != null) {
+                Iterator<EdgeData> edgeIter = graph.edgeIter(current.getKey());
+                try {
+                    while (edgeIter.hasNext()) {
+                        Node neighbour = (Node) graph.getNode(edgeIter.next().getDest());
+                        if (neighbour.getTag() != 1) {
+                            not_visited.add(neighbour); // add not visited neighbours to stack
+                        }
                     }
+                } catch (ConcurrentModificationException e) {
+                    throw new RuntimeException(edges_from_node_change());
                 }
-            } catch (ConcurrentModificationException e) {
-                throw new RuntimeException(edges_from_node_change());
             }
         }
 
