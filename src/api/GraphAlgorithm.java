@@ -115,7 +115,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
                 Node current = (Node) nodeIter.next();
                 int key = current.getKey();
                 boolean first_pass = dfs((DWGraph) g, current); // true: if all vertices were visited.
-                                                                // false: otherwise
+                // false: otherwise
 
                 DWGraph transpose = ((DWGraph) g).transpose();
                 // reset tags for DFS pass on the transposed graph
@@ -126,7 +126,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
 
                 Node new_current = (Node) transpose.getNode(key); // beginning DFS from same vertex of initial pass
                 boolean second_pass = dfs(transpose, new_current); // true: if all vertices were visited.
-                                                                    // false: otherwise
+                // false: otherwise
                 return first_pass && second_pass; // both must be true for the graph to be declared a connected one
             }
         } catch (ConcurrentModificationException e) {
@@ -170,16 +170,17 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
      * if said map is empty - returns -1
      */
     private int node_with_min_weight(HashMap<Integer, Node> map) {
-        Node result = new Node(-1, null);
-        result.setInWeight(Double.MAX_VALUE);
+        int result = -1;
+        double min_weight = Double.MAX_VALUE;
         if (!map.isEmpty()) {
             for (Node current : map.values()) {
-                if (current.getInWeight() < result.getInWeight()) {
-                    result = current;
+                if (current.getInWeight() < min_weight) {
+                    min_weight = current.getInWeight();
+                    result = current.getKey();
                 }
             }
         }
-        return result.getKey();
+        return result;
     }
 
     // assists the "shortest path" functions.
@@ -274,11 +275,11 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
      * @return The largest in-weight (distance from source) out of all the vertices,
      * relative to the source vertex.
      */
-    private double shortestPathsForCenter(int source) {
+    private double MaxShortestPath(int source) {
 
         HashMap<Integer, Node> unCheckedNodes = create_unCheckedNodes();
         initialize_all_to_maxValue(unCheckedNodes, source); // this func. initializes the source vertex in-weight to 0,
-                                                            // while all the other in weights are initialized to +infinity
+        // while all the other in weights are initialized to +infinity
         double max_shortest_path = Double.MIN_VALUE;
         try {
             while (!unCheckedNodes.isEmpty()) {
@@ -319,26 +320,28 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
      * this function calculates said vertex.
      * this func. assumes the graph is connected.
      *
-     * @return the center of a connected directed weighted graph
+     * @return the center of a connected directed weighted graph. If not connected: returns null.
      */
     @Override
     public NodeData center() {
-        NodeData center = null;
-        double min_max_dist = Double.MAX_VALUE;
-        Iterator<NodeData> node_iter = g.nodeIter();
-        try {
-            while (node_iter.hasNext()) {
-                Node current = (Node) node_iter.next();
-                double current_node_max_shortest_path = shortestPathsForCenter(current.getKey());
-                if (current_node_max_shortest_path < min_max_dist) {
-                    min_max_dist = current_node_max_shortest_path;
-                    center = current;
+        NodeData center = null; // null should be return
+        if (isConnected()) {
+            double min_max_dist = Double.MAX_VALUE;
+            Iterator<NodeData> node_iter = g.nodeIter();
+            try {
+                while (node_iter.hasNext()) {
+                    Node current = (Node) node_iter.next();
+                    double current_node_max_shortest_path = MaxShortestPath(current.getKey());
+                    if (current_node_max_shortest_path < min_max_dist) {
+                        min_max_dist = current_node_max_shortest_path;
+                        center = current;
+                    }
                 }
+            } catch (ConcurrentModificationException e) {
+                throw new RuntimeException(graph_change());
             }
-        } catch (ConcurrentModificationException e) {
-            throw new RuntimeException(graph_change());
         }
-        return center;
+        return center; // if the graph is not connected returns null.
     }
 
     /**
@@ -354,7 +357,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         double min_distance = Double.MAX_VALUE;
 
         for (NodeData n : unCheckedNodes) {
-            shortestPathsForCenter(n.getKey()); // update in-weight variables relative to n
+            MaxShortestPath(n.getKey()); // update in-weight variables relative to n
             for (NodeData m : unCheckedNodes) { // iterate over all the other* vertices
                 if (n.getKey() == m.getKey()) continue; // *skips over itself
                 double current_in_weight = ((Node) m).getInWeight();
@@ -376,7 +379,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
      * @return the key (ID) of said vertex.
      */
     private int closest_node(List<NodeData> unCheckedNodes, int src) {
-        shortestPathsForCenter(src); // updates the in-weight variables relative to source
+        MaxShortestPath(src); // updates the in-weight variables relative to source
         int result = src;
         double min_weight = Double.MAX_VALUE;
         for (NodeData nodeData : unCheckedNodes) {
@@ -444,52 +447,54 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     @Override
     public boolean save(String file) {
         if (null == g) return false;
-        else try {
-            FileWriter save = new FileWriter(file);
-            Iterator<EdgeData> edgeIter = g.edgeIter();
-            JSONObject graph = new JSONObject();
-            JSONArray edge_list = new JSONArray();
+        else {
+            try {
+                FileWriter save = new FileWriter(file);
+                Iterator<EdgeData> edgeIter = g.edgeIter();
+                JSONObject graph = new JSONObject();
+                JSONArray edge_list = new JSONArray();
 
-            while (edgeIter.hasNext()) {
-                // converts edge object to json object
-                Edge current = (Edge) edgeIter.next();
-                JSONObject edge = new JSONObject();
-                edge.put("src", current.getSrc());
-                edge.put("w", current.getWeight());
-                edge.put("dest", current.getDest());
-                //add to json array
-                edge_list.add(edge);
+                while (edgeIter.hasNext()) {
+                    // converts edge object to json object
+                    Edge current = (Edge) edgeIter.next();
+                    JSONObject edge = new JSONObject();
+                    edge.put("src", current.getSrc());
+                    edge.put("w", current.getWeight());
+                    edge.put("dest", current.getDest());
+                    //add to json array
+                    edge_list.add(edge);
+                }
+
+                // add edge json array to final json object
+                graph.put("Edges", edge_list);
+                Iterator<NodeData> nodeIter = g.nodeIter();
+                JSONArray node_list = new JSONArray();
+
+                while (nodeIter.hasNext()) {
+                    // converts Node object to json object:
+                    Node current = (Node) nodeIter.next();
+                    JSONObject node = new JSONObject();
+                    String pos = current.getLocation().x() +
+                            ", " + current.getLocation().y() +
+                            ", " + current.getLocation().z();
+                    node.put("pos", pos);
+                    node.put("id", current.getKey());
+                    // add to jason array
+                    node_list.add(node);
+                }
+
+                // add node json array to final json object
+                graph.put("Nodes", node_list);
+                // define indentation specifics fo "pretty printing"
+                save.write(graph.toString(4));
+                // close the file writer
+                save.close();
+
+            } catch (ConcurrentModificationException e) {
+                throw new RuntimeException(graph_change());
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-            // add edge json array to final json object
-            graph.put("Edges", edge_list);
-            Iterator<NodeData> nodeIter = g.nodeIter();
-            JSONArray node_list = new JSONArray();
-
-            while (nodeIter.hasNext()) {
-                // converts Node object to json object:
-                Node current = (Node) nodeIter.next();
-                JSONObject node = new JSONObject();
-                String pos = current.getLocation().x() +
-                        ", " + current.getLocation().y() +
-                        ", " + current.getLocation().z();
-                node.put("pos", pos);
-                node.put("id", current.getKey());
-                // add to jason array
-                node_list.add(node);
-            }
-
-            // add node json array to final json object
-            graph.put("Nodes", node_list);
-            // define indentation specifics fo "pretty printing"
-            save.write(graph.toString(4));
-            // close the file writer
-            save.close();
-
-        } catch (ConcurrentModificationException e) {
-            throw new RuntimeException(graph_change());
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         return true;
     }

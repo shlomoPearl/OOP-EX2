@@ -154,17 +154,17 @@ class GraphAlgorithmTest {
         String ans2 = "[1, 2, 3]";
 
         assertEquals(ans1, a.toString());
-        assertEquals(null, b);
+        assertNull(b);
         assertEquals(ans2, c.toString());
     }
 
     @org.junit.jupiter.api.Test
     void center() {
 
-        graph1.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G1.json");
-        graph2.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G2.json");
-        graph3.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G3.json");
-        graph4.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\1000Nodes.json");
+        graph1.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G1.json");
+        graph2.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G2.json");
+        graph3.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G3.json");
+//        graph4.load("C:/Users/shlom/IdeaProjects/Ex2/data/1000Nodes.json");
 
         assertEquals(8, graph1.center().getKey());
         assertEquals(0, graph2.center().getKey());
