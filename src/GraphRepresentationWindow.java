@@ -158,10 +158,10 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
             JTextField add_destination = new JTextField(5);
             JTextField add_edge_weight = new JTextField(5);
             JPanel add_edge_input_panel = new JPanel();
-            add_edge_input_panel.add(new JLabel("Source Vertex:"));
+            add_edge_input_panel.add(new JLabel("Source Vertex ID:"));
             add_edge_input_panel.add(add_source);
             add_edge_input_panel.add(Box.createVerticalStrut(15)); // a spacer
-            add_edge_input_panel.add(new JLabel("Destination Vertex:"));
+            add_edge_input_panel.add(new JLabel("Destination Vertex ID:"));
             add_edge_input_panel.add(add_destination);
             add_edge_input_panel.add(new JLabel("Weight:"));
             add_edge_input_panel.add(add_edge_weight);
@@ -191,10 +191,10 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
             JTextField remove_source = new JTextField(5);
             JTextField remove_destination = new JTextField(5);
             JPanel remove_edge_input_panel = new JPanel();
-            remove_edge_input_panel.add(new JLabel("Source Vertex:"));
+            remove_edge_input_panel.add(new JLabel("Source Vertex ID:"));
             remove_edge_input_panel.add(remove_source);
             remove_edge_input_panel.add(Box.createVerticalStrut(15)); // a spacer
-            remove_edge_input_panel.add(new JLabel("Destination Vertex:"));
+            remove_edge_input_panel.add(new JLabel("Destination Vertex ID:"));
             remove_edge_input_panel.add(remove_destination);
 
             int remove_edge_result = JOptionPane.showConfirmDialog(
@@ -235,25 +235,54 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
                 } catch (IllegalArgumentException iae) {
                     JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
                 }
-
+            }
                 // Algorithms:
 
+            // Save to json file
 
             } else if (e.getSource() == saveButton) {
                 p = new ParameterWindow("s", this);
                 p.setVisible(true);
 
+            // Load from json file
             } else if (e.getSource() == loadButton) {
                 p = new ParameterWindow("l", this);
                 p.setBounds(380, 80, 550, 80);
                 p.setVisible(true);
 
+            // Shortest path
 
             } else if (e.getSource() == shortestPath) {
-                p = new ParameterWindow("SP", this);
-                p.setVisible(true);
 
-            } else if (e.getSource() == shortestPathDist) {
+                JTextField SP_src = new JTextField(5);
+                JTextField SP_dest = new JTextField(5);
+                JPanel SP_input_panel = new JPanel();
+                SP_input_panel.add(new JLabel("Source Vertex ID:"));
+                SP_input_panel.add(SP_src);
+                SP_input_panel.add(Box.createVerticalStrut(15)); // a spacer
+                SP_input_panel.add(new JLabel("Destination Vertex ID:"));
+                SP_input_panel.add(SP_dest);
+
+                int SP_input_panel_result = JOptionPane.showConfirmDialog(
+                        null, SP_input_panel,
+                        "Shortest Path Between:", JOptionPane.OK_CANCEL_OPTION);
+                if (SP_input_panel_result == JOptionPane.OK_OPTION) {
+                    try {
+                        int src = Integer.parseInt(SP_src.getText());
+                        int dest = Integer.parseInt(SP_dest.getText());
+
+                        String SP_list = graph_algo.shortestPath(src, dest).toString();
+                        SP_list = SP_list.substring(1, SP_list.length() - 1);
+                        System.out.println(SP_list);
+                        JOptionPane.showMessageDialog(null, SP_list, "The Shortest Path Is:", JOptionPane.INFORMATION_MESSAGE);
+
+                    } catch (NumberFormatException nfe) {
+                        JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                    } catch (IllegalArgumentException iae) {
+                        JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                } else if (e.getSource() == shortestPathDist) {
                 p = new ParameterWindow("SPD", this);
                 p.setVisible(true);
 
