@@ -1,6 +1,7 @@
 import api.GraphAlgorithm;
 import api.Location;
 import api.Node;
+import api.NodeData;
 
 import javax.swing.*;
 import java.awt.*;
@@ -339,8 +340,9 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
 
         } else if (e.getSource() == center) {
 
-            int center = graph_algo.center().getKey();
-            String answer = (" The ID of center vertex is: " + center);
+            NodeData center = graph_algo.center();
+            String answer = (null != center) ? "The ID of center vertex is: " + center.getKey() : "The graph is " +
+                    "not connected and therefore has no center.";
             JOptionPane.showMessageDialog(null, answer, "Center:", JOptionPane.CLOSED_OPTION);
 
         }
