@@ -345,6 +345,7 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
                     "not connected and therefore has no center.";
             JOptionPane.showMessageDialog(null, answer, "Center:", JOptionPane.CLOSED_OPTION);
 
+
         }
     }
 
