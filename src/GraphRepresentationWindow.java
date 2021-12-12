@@ -128,22 +128,45 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
             p = new ParameterWindow("SPD", this);
             p.setVisible(true);
 
-        } else if (e.getSource() == removeEdgeButton) {   ///V
+        } else if (e.getSource() == removeEdgeButton) {   ///
+            JTextField source = new JTextField(5);
+            JTextField destination = new JTextField(5);
+            JFrame panel_frame = new JFrame();
+            panel_frame.setSize(100, 500);
+            JPanel myPanel = new JPanel();
+            myPanel.add(new JLabel("Source Vertex:"));
+            myPanel.add(source);
+            myPanel.add(Box.createVerticalStrut(15)); // a spacer
+            myPanel.add(new JLabel("Destination Vertex:"));
+            myPanel.add(destination);
 
-            String delete_edge = JOptionPane.showInputDialog("source: ")+
-                    ","+JOptionPane.showInputDialog("destination: ");
-            String [] src_dest = delete_edge.split(",");
-            if (src_dest.length == 2) {
-                try {
-                    int src = Integer.parseInt(src_dest[0]);
-                    int dest = Integer.parseInt(src_dest[1]);
-                    graph_algo.getGraph().removeEdge(src, dest);
-                }catch (IllegalArgumentException exception){
-                    JOptionPane.showMessageDialog(null,"Source and destination should be numbers","Wrong!",JOptionPane.ERROR_MESSAGE);
-                }
-            }
-//            p = new ParameterWindow("RE", this);
-//            p.setVisible(true);
+
+            int result = JOptionPane.showConfirmDialog(
+                    myPanel, myPanel,
+                    "Input Box",
+                    JOptionPane.OK_CANCEL_OPTION);
+//            //if (result == JOptionPane.OK_OPTION) {
+//              //  System.out.println("source: " + source.getText());
+//               // System.out.println("dest: " + destination.getText());
+//            }
+///*
+//            String delete_edge = JOptionPane.showInputDialog("source: ")+
+//                    ","+JOptionPane.showInputDialog("destination: ");
+//            String [] src_dest = delete_edge.split(",");
+//            if (src_dest.length == 2) {
+//                try {
+//                    int src = Integer.parseInt(src_dest[0]);
+//                    int dest = Integer.parseInt(src_dest[1]);
+//                    graph_algo.getGraph().removeEdge(src, dest);
+//                }catch (IllegalArgumentException exception){
+//                    JOptionPane.showMessageDialog(null,"Source and destination should be numbers","Wrong!",JOptionPane.ERROR_MESSAGE);
+//                }
+//            }
+////            p = new ParameterWindow("RE", this);
+////            p.setVisible(true);
+//
+//*/
+
 
         } else if (e.getSource() == removeNodeButton) {  //V
 
