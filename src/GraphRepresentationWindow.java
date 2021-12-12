@@ -1,11 +1,10 @@
-import api.GraphAlgorithm;
-import api.Location;
-import api.Node;
-import api.NodeData;
+import api.*;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GraphRepresentationWindow extends JFrame implements ActionListener, MouseListener, MouseMotionListener {
     ParameterWindow p;
@@ -29,25 +28,25 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
     public GraphRepresentationWindow() {
         initFrame();
         addMenu();
-        initPanel();
-        graph_algo.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/1000Nodes.json");
+        //initPanel();
+        graph_algo.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\1000Nodes.json");
     }
 
     public static void main(String[] args) {
         new GraphRepresentationWindow();
     }
 
-    private void initPanel() {
-        JPanel panel = new JPanel();
-//        jPanel.setLayout(new FlowLayout());
-        panel.setBackground(new Color(150, 250, 250));
-        //jPanel.setBounds(380, 80, 800, 600);
-        //   jPanel.setSize(800,600);
-//        jPanel.setVisible(true);
-        this.add(panel);
-
-
-    }
+//    private void initPanel() {
+//        JPanel panel = new JPanel();
+////        jPanel.setLayout(new FlowLayout());
+//        panel.setBackground(new Color(150, 250, 250));
+//        //jPanel.setBounds(380, 80, 800, 600);
+//        //   jPanel.setSize(800,600);
+////        jPanel.setVisible(true);
+//        panel.add(this);
+//
+//
+//    }
 
     private void initFrame() {
         this.setLayout(new FlowLayout());
@@ -135,14 +134,23 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
                     null, add_node_input_panel,
                     "Add Vertex:",
                     JOptionPane.OK_CANCEL_OPTION);
+            System.out.println(JOptionPane.OK_OPTION);
             if (add_node_result == JOptionPane.OK_OPTION) {
                 try {
                     int id = Integer.parseInt(key.getText());
                     int x_co = Integer.parseInt(x.getText());
                     int y_co = Integer.parseInt(y.getText());
                     int z_co = Integer.parseInt(z.getText());
-
-                    graph_algo.getGraph().addNode(new Node(id, new Location(x_co, y_co, z_co)));
+                    //Dovi
+                    if (graph_algo.getGraph() != null) {
+                        graph_algo.getGraph().addNode(new Node(id, new Location(x_co, y_co, z_co)));
+                    } else {
+                        DWGraph graph = new DWGraph();
+                        Node node = new Node(id, new Location(x_co, y_co, z_co));
+                        graph.addNode(node);
+                        graph_algo.init(graph);
+                    }
+                    drawNode(id,x_co,y_co,z_co);
                 } catch (NumberFormatException nfe) {
                     JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
                 } catch (IllegalArgumentException iae) {
@@ -177,7 +185,10 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
                     int src = Integer.parseInt(add_source.getText());
                     int dest = Integer.parseInt(add_destination.getText());
                     double w = Double.parseDouble(add_edge_weight.getText());
-                    graph_algo.getGraph().connect(src, dest, w);
+                    //Dovi
+                    if (graph_algo.getGraph() != null && graph_algo.getGraph().nodeSize() > 0) {
+                        graph_algo.getGraph().connect(src, dest, w);
+                    }
                 } catch (NumberFormatException nfe) {
                     JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
                 } catch (IllegalArgumentException iae) {
@@ -272,6 +283,13 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
                     int src = Integer.parseInt(SP_src.getText());
                     int dest = Integer.parseInt(SP_dest.getText());
 
+//                    List<NodeData> path_list = graph_algo.shortestPath(src, dest);
+//                    String path_string = "";
+//                    for (int i = 0; i < path_list.size() - 1; i++) {
+//                        path_string += path_list.get(i).toString()+ " ->";
+//                    }
+//                    path_string+= path_list.get(path_list.size()-1).toString();
+
                     String SP_list = graph_algo.shortestPath(src, dest).toString();
                     SP_list = SP_list.substring(1, SP_list.length() - 1);
                     JOptionPane.showMessageDialog(null, SP_list, "The Shortest Path Is:", JOptionPane.INFORMATION_MESSAGE);
@@ -318,6 +336,38 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
 
         } else if (e.getSource() == tspButton) {
 
+            JTextField tsp_list = new JTextField(5);
+            JPanel TSP_input_panel = new JPanel();
+            TSP_input_panel.add(new JLabel("List Of Vertex ID:"));
+            TSP_input_panel.add(tsp_list);
+
+            int TSP_input_panel_result = JOptionPane.showConfirmDialog(
+                    null, TSP_input_panel,
+                    "Shortest Travel:", JOptionPane.OK_CANCEL_OPTION);
+            if (TSP_input_panel_result == JOptionPane.OK_OPTION) {
+                try {
+                    String[] tsp_string_list = tsp_list.getText().split(",");
+                    List<NodeData> cities = new ArrayList<>();
+                    for (int i = 0; i < tsp_string_list.length; i++) {
+                        NodeData current = graph_algo.getGraph().getNode(Integer.parseInt(tsp_string_list[i]));
+                        cities.add(current);
+                    }
+//                    List<NodeData> path_list = graph_algo.tsp(cities);
+//                    String path_string = "";
+//                    for (int i = 0; i < path_list.size() - 1; i++) {
+//                        path_string += path_list.get(i).toString() + " ->";
+//                    }
+//                    path_string += path_list.get(path_list.size() - 1).toString();
+                    String SP_list = graph_algo.tsp(cities).toString();
+                    SP_list = SP_list.substring(1, SP_list.length() - 1);
+                    JOptionPane.showMessageDialog(null, SP_list, "The Shortest Path Is:", JOptionPane.INFORMATION_MESSAGE);
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                } catch (IllegalArgumentException iae) {
+                    JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
         } else if (e.getSource() == isConnected) {
 
             String T = "Yep! The Graph is Connected!";
@@ -349,16 +399,20 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
         }
     }
 
+    private void drawNode(int id, int x_co, int y_co, int z_co) {
+
+    }
+
 
     public void save(String path) {
         graph_algo.save(path);
-        System.out.println(graph_algo.getGraph());
+        //System.out.println(graph_algo.getGraph());
     }
 
     protected void load(String path) {
         graph_algo = new GraphAlgorithm();
         graph_algo.load(path);
-        System.out.println(graph_algo.getGraph());
+        //System.out.println(graph_algo.getGraph());
     }
 
     @Override
