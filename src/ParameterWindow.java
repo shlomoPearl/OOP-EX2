@@ -22,10 +22,10 @@ public class ParameterWindow extends JFrame implements ActionListener {
     JButton TSPButton = new JButton("Submit");
 
 
+
     public ParameterWindow(String flag, GraphRepresentationWindow GRW){
         this.GRW = GRW;
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         if (flag.equals("s")){
             this.setLayout(new FlowLayout());
@@ -46,6 +46,26 @@ public class ParameterWindow extends JFrame implements ActionListener {
             this.add(text);
             this.pack();
         }
+        else if(flag.equals("AN")){
+            this.setLayout(new FlowLayout());
+            text.setPreferredSize(new Dimension(400,35));
+            ANButton.addActionListener(this);
+            this.add(ANButton);
+            this.add(new Label("Key:"));
+            this.add(new Label("Location:"));
+            this.add(text);
+            this.pack();
+        }
+        else if(flag.equals("SPD")){
+            this.setLayout(new FlowLayout());
+            text.setPreferredSize(new Dimension(400,35));
+            SPDButton.addActionListener(this);
+            this.add(SPDButton);
+            this.add(new Label("From:"));
+            this.add(new Label("To:"));
+            this.add(text);
+            this.pack();
+        }
     }
 
     @Override
@@ -58,5 +78,6 @@ public class ParameterWindow extends JFrame implements ActionListener {
             GRW.load(text.getText());
             this.dispose();
         }
+
     }
 }
