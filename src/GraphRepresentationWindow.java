@@ -16,7 +16,7 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
     MenuItem removeNodeButton = new MenuItem("Remove Vertex");
     MenuItem removeEdgeButton = new MenuItem("Remove Edge");
     MenuItem shortestPath = new MenuItem("Shortest Path");
-    MenuItem shortestPathDist = new MenuItem("Shortest Path Distance");
+    MenuItem shortestPathDist = new MenuItem("Distance");
     MenuItem isConnected = new MenuItem("Connected?");
     MenuItem center = new MenuItem("Graph Center");
     MenuItem getNodeSize = new MenuItem("No. of Vertices");
@@ -236,85 +236,113 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
                     JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
                 }
             }
-                // Algorithms:
+            // Algorithms:
 
             // Save to json file
 
-            } else if (e.getSource() == saveButton) {
-                p = new ParameterWindow("s", this);
-                p.setVisible(true);
+        } else if (e.getSource() == saveButton) {
+            p = new ParameterWindow("s", this);
+            p.setVisible(true);
 
             // Load from json file
-            } else if (e.getSource() == loadButton) {
-                p = new ParameterWindow("l", this);
-                p.setBounds(380, 80, 550, 80);
-                p.setVisible(true);
+        } else if (e.getSource() == loadButton) {
+            p = new ParameterWindow("l", this);
+            p.setBounds(380, 80, 550, 80);
+            p.setVisible(true);
 
             // Shortest path
 
-            } else if (e.getSource() == shortestPath) {
+        } else if (e.getSource() == shortestPath) {
 
-                JTextField SP_src = new JTextField(5);
-                JTextField SP_dest = new JTextField(5);
-                JPanel SP_input_panel = new JPanel();
-                SP_input_panel.add(new JLabel("Source Vertex ID:"));
-                SP_input_panel.add(SP_src);
-                SP_input_panel.add(Box.createVerticalStrut(15)); // a spacer
-                SP_input_panel.add(new JLabel("Destination Vertex ID:"));
-                SP_input_panel.add(SP_dest);
+            JTextField SP_src = new JTextField(5);
+            JTextField SP_dest = new JTextField(5);
+            JPanel SP_input_panel = new JPanel();
+            SP_input_panel.add(new JLabel("Source Vertex ID:"));
+            SP_input_panel.add(SP_src);
+            SP_input_panel.add(Box.createVerticalStrut(15)); // a spacer
+            SP_input_panel.add(new JLabel("Destination Vertex ID:"));
+            SP_input_panel.add(SP_dest);
 
-                int SP_input_panel_result = JOptionPane.showConfirmDialog(
-                        null, SP_input_panel,
-                        "Shortest Path Between:", JOptionPane.OK_CANCEL_OPTION);
-                if (SP_input_panel_result == JOptionPane.OK_OPTION) {
-                    try {
-                        int src = Integer.parseInt(SP_src.getText());
-                        int dest = Integer.parseInt(SP_dest.getText());
+            int SP_input_panel_result = JOptionPane.showConfirmDialog(
+                    null, SP_input_panel,
+                    "Shortest Path Between:", JOptionPane.OK_CANCEL_OPTION);
+            if (SP_input_panel_result == JOptionPane.OK_OPTION) {
+                try {
+                    int src = Integer.parseInt(SP_src.getText());
+                    int dest = Integer.parseInt(SP_dest.getText());
 
-                        String SP_list = graph_algo.shortestPath(src, dest).toString();
-                        SP_list = SP_list.substring(1, SP_list.length() - 1);
-                        System.out.println(SP_list);
-                        JOptionPane.showMessageDialog(null, SP_list, "The Shortest Path Is:", JOptionPane.INFORMATION_MESSAGE);
+                    String SP_list = graph_algo.shortestPath(src, dest).toString();
+                    SP_list = SP_list.substring(1, SP_list.length() - 1);
+                    JOptionPane.showMessageDialog(null, SP_list, "The Shortest Path Is:", JOptionPane.INFORMATION_MESSAGE);
 
-                    } catch (NumberFormatException nfe) {
-                        JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
-                    } catch (IllegalArgumentException iae) {
-                        JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
-                    }
-
-                } else if (e.getSource() == shortestPathDist) {
-                p = new ParameterWindow("SPD", this);
-                p.setVisible(true);
-
-            } else if (e.getSource() == tspButton) {
-
-            } else if (e.getSource() == isConnected) {
-
-                String T = "Yay! The Graph is Connected!";
-                String F = "Nope! Not Connected... Sorry :-(";
-                String answer = (graph_algo.isConnected()) ? T : F;
-                JOptionPane.showMessageDialog(null, answer, "is connected?", JOptionPane.CLOSED_OPTION);
-
-            } else if (e.getSource() == getEdgeSize) {  //V
-
-                int edge_size = graph_algo.getGraph().edgeSize();
-                String answer = ("There are " + edge_size + " Edges in this graph");
-                JOptionPane.showMessageDialog(null, answer, "No. Of Edges:", JOptionPane.CLOSED_OPTION);
-
-
-            } else if (e.getSource() == getNodeSize) {  //V
-
-                int node_size = graph_algo.getGraph().nodeSize();
-                String answer = ("There are " + node_size + " Nodes in this graph");
-                JOptionPane.showMessageDialog(null, answer, "No. Of Nodes:", JOptionPane.CLOSED_OPTION);
-
-            } else if (e.getSource() == center) {
-
-                int center = graph_algo.center().getKey();
-                String answer = (" The ID number of center vertex is: " + center);
-                JOptionPane.showMessageDialog(null, answer, "Center:", JOptionPane.CLOSED_OPTION);
-
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                } catch (IllegalArgumentException iae) {
+                    JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                }
             }
+
+
+            // Shortest Path Distance:
+
+        } else if (e.getSource() == shortestPathDist) {
+
+            JTextField SPD_src = new JTextField(5);
+            JTextField SPD_dest = new JTextField(5);
+            JPanel SPD_input_panel = new JPanel();
+            SPD_input_panel.add(new JLabel("Source Vertex ID:"));
+            SPD_input_panel.add(SPD_src);
+            SPD_input_panel.add(Box.createVerticalStrut(15)); // a spacer
+            SPD_input_panel.add(new JLabel("Destination Vertex ID:"));
+            SPD_input_panel.add(SPD_dest);
+
+            int SPD_input_panel_result = JOptionPane.showConfirmDialog(
+                    null, SPD_input_panel,
+                    "Distance Between:", JOptionPane.OK_CANCEL_OPTION);
+            if (SPD_input_panel_result == JOptionPane.OK_OPTION) {
+                try {
+
+                    int src = Integer.parseInt(SPD_src.getText());
+                    int dest = Integer.parseInt(SPD_dest.getText());
+
+                    double SPD = graph_algo.shortestPathDist(src, dest);
+                    JOptionPane.showMessageDialog(null, "" + SPD, "The Distance Is:", JOptionPane.INFORMATION_MESSAGE);
+
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                } catch (IllegalArgumentException iae) {
+                    JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+        } else if (e.getSource() == tspButton) {
+
+        } else if (e.getSource() == isConnected) {
+
+            String T = "Yep! The Graph is Connected!";
+            String F = "Nope! Not Connected... Sorry :-(";
+            String answer = (graph_algo.isConnected()) ? T : F;
+            JOptionPane.showMessageDialog(null, answer, "Is This Graph Connected?", JOptionPane.CLOSED_OPTION);
+
+        } else if (e.getSource() == getEdgeSize) {
+
+            int edge_size = graph_algo.getGraph().edgeSize();
+            String answer = ("There are " + edge_size + " edges in this graph.");
+            JOptionPane.showMessageDialog(null, answer, "No. Of Edges:", JOptionPane.CLOSED_OPTION);
+
+
+        } else if (e.getSource() == getNodeSize) {
+
+            int node_size = graph_algo.getGraph().nodeSize();
+            String answer = ("There are " + node_size + " vertices in this graph.");
+            JOptionPane.showMessageDialog(null, answer, "No. of Vertices:", JOptionPane.CLOSED_OPTION);
+
+        } else if (e.getSource() == center) {
+
+            int center = graph_algo.center().getKey();
+            String answer = (" The ID of center vertex is: " + center);
+            JOptionPane.showMessageDialog(null, answer, "Center:", JOptionPane.CLOSED_OPTION);
+
         }
     }
 
