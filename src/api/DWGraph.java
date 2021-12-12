@@ -9,6 +9,26 @@ public class DWGraph implements DirectedWeightedGraph {
     private int node_size = 0;
     private int edge_size = 0;
     private int MC = 0;
+    private double minX = Double.MAX_VALUE;
+    private double maxX = 0;
+    private double minY = Double.MAX_VALUE;
+    private double maxY = 0;
+
+    public double getMinX() {
+        return minX;
+    }
+
+    public double getMaxX() {
+        return maxX;
+    }
+
+    public double getMinY() {
+        return minY;
+    }
+
+    public double getMaxY() {
+        return maxY;
+    }
 
     private HashMap<Integer, NodeData> nodes = new HashMap<>();
     private HashMap<String, EdgeData> edges = new HashMap<>();
@@ -16,7 +36,9 @@ public class DWGraph implements DirectedWeightedGraph {
     private HashMap<Integer, HashMap<Integer, EdgeData>> edges_to_node = new HashMap<>();
 
 
-    public DWGraph() {}
+    public DWGraph() {
+
+    }
 
     // copy constructor
     public DWGraph(DWGraph g) {
@@ -115,26 +137,37 @@ public class DWGraph implements DirectedWeightedGraph {
         nodes.put(n.getKey(), n);
         node_size++;
         MC++;
+        if (n.getLocation().x() < minX) {
+            minX = n.getLocation().x();
+        } else if (n.getLocation().x() > maxX) {
+            maxX = n.getLocation().x();
+        }
+        if (n.getLocation().y() < minY) {
+            minX = n.getLocation().y();
+        } else if (n.getLocation().y() > maxY) {
+            maxX = n.getLocation().y();
+        }
     }
 
     @Override
     public void connect(int src, int dest, double w) {
-        Edge edge = new Edge(src, dest, w);
-        String tuple = tuple(src, dest);
+        if (nodes.containsKey(src) && nodes.containsKey(dest)) {
+            Edge edge = new Edge(src, dest, w);
+            String tuple = tuple(src, dest);
+            if (!edges.containsKey(tuple)) {
+                edges.put(tuple, edge);
+                if (!edges_from_node.containsKey(src)) {
+                    edges_from_node.put(src, new HashMap<>());
+                }
+                edges_from_node.get(src).put(dest, edge);
 
-        if (!edges.containsKey(tuple)) {
-            edges.put(tuple, edge);
-            if (!edges_from_node.containsKey(src)) {
-                edges_from_node.put(src, new HashMap<>());
+                if (!edges_to_node.containsKey(dest)) {
+                    edges_to_node.put(dest, new HashMap<>());
+                }
+                edges_to_node.get(dest).put(src, edge);
+                edge_size++;
+                MC++;
             }
-            edges_from_node.get(src).put(dest, edge);
-
-            if (!edges_to_node.containsKey(dest)) {
-                edges_to_node.put(dest, new HashMap<>());
-            }
-            edges_to_node.get(dest).put(src, edge);
-            edge_size++;
-            MC++;
         }
     }
 
