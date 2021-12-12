@@ -204,14 +204,15 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return unCheckedNodes;
     }
 
-    /**
-     * a certain variation of the well known Dijkstra algorithm, which can be used to find the shortest path between
-     * two vertices on a weighted graph.
-     *
-     * @param src  - start node
-     * @param dest - end (target) node
-     * @return a list of all the vertices on said path, in travelling order.
-     */
+
+        /**
+         * a certain variation of the well known Dijkstra algorithm, which can be used to find the shortest path between
+         * two vertices on a weighted graph.
+         *
+         * @param src  - start node
+         * @param dest - end (target) node
+         * @return a list of all the vertices on said path, in travelling order.
+         */
     @Override
     public List<NodeData> shortestPath(int src, int dest) {
 

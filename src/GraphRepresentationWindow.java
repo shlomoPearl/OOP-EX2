@@ -29,7 +29,7 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
         initFrame();
         addMenu();
         //initPanel();
-        graph_algo.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\1000Nodes.json");
+        graph_algo.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/1000Nodes.json");
     }
 
     public static void main(String[] args) {
