@@ -30,7 +30,6 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return "Graph has been modified during iteration. Iterator not up to date.";
     }
 
-
     /**
      * @return message to be displayed in a Runtime exception thrown due to changes made during iteration
      * over edges out-going from a specific vertex
@@ -39,7 +38,6 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         return "Out-going edges of a certain node have been" +
                 " modified during iteration over them. Iterator not up to date.";
     }
-
 
     @Override
     public void init(DirectedWeightedGraph g) {
@@ -157,6 +155,8 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     }
 
     // assists the "shortest path" functions.
+
+    // assists the "shortest path" functions.
     private void initialize_all_to_maxValue(HashMap<Integer, Node> hm, int src) {
         for (Node current : hm.values()) {
             if (current.getKey() != src) {
@@ -187,8 +187,6 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         }
         return result;
     }
-
-    // assists the "shortest path" functions.
 
     private HashMap<Integer, Node> create_unCheckedNodes() {
 
@@ -503,7 +501,6 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         }
         return true;
     }
-
 
     /**
      * this func. loads the graph object from a JSON file from a given directory,

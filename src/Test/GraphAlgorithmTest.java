@@ -24,6 +24,7 @@ class GraphAlgorithmTest {
     GraphAlgorithm graph2 = new GraphAlgorithm();
     GraphAlgorithm graph3 = new GraphAlgorithm();
     GraphAlgorithm graph4 = new GraphAlgorithm();
+    GraphAlgorithm graph5 = new GraphAlgorithm();
 
 
     @org.junit.jupiter.api.Test
@@ -50,9 +51,9 @@ class GraphAlgorithmTest {
 
     @org.junit.jupiter.api.Test
     void isConnected() {
-        graph1.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G1.json");
-        graph2.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G2.json");
-        graph3.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G3.json");
+        graph1.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G1.json");
+        graph2.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G2.json");
+        graph3.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G3.json");
 
         boolean a = graph1.isConnected();
         boolean b = graph2.isConnected();
@@ -111,9 +112,9 @@ class GraphAlgorithmTest {
         assertEquals(-1, b);
         assertEquals(3, c);
 
-        graph1.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G1.json");
-        graph2.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G2.json");
-        graph3.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G3.json");
+        graph1.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G1.json");
+        graph2.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G2.json");
+        graph3.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G3.json");
 
         a = graph1.shortestPathDist(2, 10);
         b = graph2.shortestPathDist(2, 10);
@@ -161,14 +162,17 @@ class GraphAlgorithmTest {
     @org.junit.jupiter.api.Test
     void center() {
 
-        graph1.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G1.json");
-        graph2.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G2.json");
-        graph3.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G3.json");
-//        graph4.load("C:/Users/shlom/IdeaProjects/Ex2/data/1000Nodes.json");
+//        graph1.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G1.json");
+//        graph2.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G2.json");
+//        graph3.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G3.json");
+//        graph4.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/1000Nodes.json");
+        graph5.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/10000Nodes.json");
 
-        assertEquals(8, graph1.center().getKey());
-        assertEquals(0, graph2.center().getKey());
-        assertEquals(40, graph3.center().getKey());
+//        assertEquals(8, graph1.center().getKey());
+//        assertEquals(0, graph2.center().getKey());
+//        assertEquals(40, graph3.center().getKey());
+//        assertEquals(362, graph4.center().getKey());
+        assertEquals(50, graph5.center().getKey());
     }
 
     @org.junit.jupiter.api.Test
