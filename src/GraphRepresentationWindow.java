@@ -1,8 +1,8 @@
 import api.GraphAlgorithm;
+import api.Location;
+import api.Node;
 
 import javax.swing.*;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.Style;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -23,26 +23,30 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
     MenuItem tspButton = new MenuItem("TSP");
     MenuItem getEdgeSize = new MenuItem("No. of Edges");
 
-    api.GraphAlgorithm graph_algo;
+    api.GraphAlgorithm graph_algo = new GraphAlgorithm();
 
     public GraphRepresentationWindow() {
         initFrame();
         addMenu();
         initPanel();
+        graph_algo.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/1000Nodes.json");
+    }
+
+    public static void main(String[] args) {
+        new GraphRepresentationWindow();
     }
 
     private void initPanel() {
         JPanel panel = new JPanel();
 //        jPanel.setLayout(new FlowLayout());
-        panel.setBackground(new Color(150,250,250));
+        panel.setBackground(new Color(150, 250, 250));
         //jPanel.setBounds(380, 80, 800, 600);
-     //   jPanel.setSize(800,600);
+        //   jPanel.setSize(800,600);
 //        jPanel.setVisible(true);
         this.add(panel);
 
 
     }
-
 
     private void initFrame() {
         this.setLayout(new FlowLayout());
@@ -101,127 +105,152 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JLabel response = new JLabel("");
 
-        if (e.getSource() == saveButton) { ///V
-            p = new ParameterWindow("s", this);
-            p.setVisible(true);
+        // Actions:
 
-        } else if (e.getSource() == loadButton) {  ///V
-            p = new ParameterWindow("l", this);
-            p.setBounds(380, 80, 550, 80);
-            p.setVisible(true);
+        if (e.getSource() == addNodeButton) {
 
-        } else if (e.getSource() == addNodeButton) { //
-            p = new ParameterWindow("AN", this);
-            p.setVisible(true);
+            JTextField key = new JTextField(5);
+            JTextField x = new JTextField(5);
+            JTextField y = new JTextField(5);
+            JTextField z = new JTextField(5);
 
-        } else if (e.getSource() == connectButton) {
-            p = new ParameterWindow("c", this);
-            p.setVisible(true);
+            JPanel add_node_input_panel = new JPanel();
+            add_node_input_panel.add(new JLabel("New Vertex's ID:"));
+            add_node_input_panel.add(key);
+            add_node_input_panel.add(Box.createVerticalStrut(15)); // a spacer
+            add_node_input_panel.add(new JLabel("Geo-Location:"));
+            add_node_input_panel.add(new JLabel("x:"));
+            add_node_input_panel.add(x);
+            add_node_input_panel.add(Box.createVerticalStrut(15)); // a spacer
+            add_node_input_panel.add(new JLabel("y:"));
+            add_node_input_panel.add(y);
+            add_node_input_panel.add(Box.createVerticalStrut(15)); // a spacer
+            add_node_input_panel.add(new JLabel("z:"));
+            add_node_input_panel.add(z);
 
-        } else if (e.getSource() == shortestPath) { ///
-            p = new ParameterWindow("SP", this);
-            p.setVisible(true);
-
-        } else if (e.getSource() == shortestPathDist) { ///
-            p = new ParameterWindow("SPD", this);
-            p.setVisible(true);
-
-        } else if (e.getSource() == removeEdgeButton) {   ///
-            JTextField source = new JTextField(5);
-            JTextField destination = new JTextField(5);
-            JFrame panel_frame = new JFrame();
-            panel_frame.setSize(100, 500);
-            JPanel myPanel = new JPanel();
-            myPanel.add(new JLabel("Source Vertex:"));
-            myPanel.add(source);
-            myPanel.add(Box.createVerticalStrut(15)); // a spacer
-            myPanel.add(new JLabel("Destination Vertex:"));
-            myPanel.add(destination);
-
-
-            int result = JOptionPane.showConfirmDialog(
-                    myPanel, myPanel,
-                    "Input Box",
+            int add_node_result = JOptionPane.showConfirmDialog(
+                    null, add_node_input_panel,
+                    "Add Vertex:",
                     JOptionPane.OK_CANCEL_OPTION);
-//            //if (result == JOptionPane.OK_OPTION) {
-//              //  System.out.println("source: " + source.getText());
-//               // System.out.println("dest: " + destination.getText());
-//            }
-///*
-//            String delete_edge = JOptionPane.showInputDialog("source: ")+
-//                    ","+JOptionPane.showInputDialog("destination: ");
-//            String [] src_dest = delete_edge.split(",");
-//            if (src_dest.length == 2) {
-//                try {
-//                    int src = Integer.parseInt(src_dest[0]);
-//                    int dest = Integer.parseInt(src_dest[1]);
-//                    graph_algo.getGraph().removeEdge(src, dest);
-//                }catch (IllegalArgumentException exception){
-//                    JOptionPane.showMessageDialog(null,"Source and destination should be numbers","Wrong!",JOptionPane.ERROR_MESSAGE);
-//                }
-//            }
-////            p = new ParameterWindow("RE", this);
-////            p.setVisible(true);
-//
-//*/
+            if (add_node_result == JOptionPane.OK_OPTION) {
+                try {
+                    int id = Integer.parseInt(key.getText());
+                    int x_co = Integer.parseInt(x.getText());
+                    int y_co = Integer.parseInt(y.getText());
+                    int z_co = Integer.parseInt(z.getText());
+
+                    graph_algo.getGraph().addNode(new Node(id, new Location(x_co, y_co, z_co)));
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                } catch (IllegalArgumentException iae) {
+                    JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                }
+
+            } else if (e.getSource() == connectButton) {
+                p = new ParameterWindow("c", this);
+                p.setVisible(true);
+
+            } else if (e.getSource() == removeEdgeButton) {
+
+                JTextField source = new JTextField(5);
+                JTextField destination = new JTextField(5);
+                JPanel remove_edge_input_panel = new JPanel();
+                remove_edge_input_panel.add(new JLabel("Source Vertex:"));
+                remove_edge_input_panel.add(source);
+                remove_edge_input_panel.add(Box.createVerticalStrut(15)); // a spacer
+                remove_edge_input_panel.add(new JLabel("Destination Vertex:"));
+                remove_edge_input_panel.add(destination);
+
+                int remove_edge_result = JOptionPane.showConfirmDialog(
+                        null, remove_edge_input_panel,
+                        "Remove Edge:",
+                        JOptionPane.OK_CANCEL_OPTION);
+                if (remove_edge_result == JOptionPane.OK_OPTION) {
+                    try {
+                        int src = Integer.parseInt(source.getText());
+                        int dest = Integer.parseInt(destination.getText());
+                        graph_algo.getGraph().removeEdge(src, dest);
+                    } catch (NumberFormatException nfe) {
+                        JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                    } catch (IllegalArgumentException iae) {
+                        JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+
+            } else if (e.getSource() == removeNodeButton) {  //V
+
+                JTextField remove_key = new JTextField(5);
+                JPanel remove_node_input_panel = new JPanel();
+                remove_node_input_panel.add(new JLabel("Vertex ID:"));
+                remove_node_input_panel.add(remove_key);
+
+                int remove_node_result = JOptionPane.showConfirmDialog(
+                        null, remove_node_input_panel,
+                        "Remove Vertex:", JOptionPane.OK_CANCEL_OPTION);
+                if (remove_node_result == JOptionPane.OK_OPTION) {
+                    try {
+                        int id = Integer.parseInt(remove_key.getText());
+                        graph_algo.getGraph().removeNode(id);
+                    } catch (NumberFormatException nfe) {
+                        JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                    } catch (IllegalArgumentException iae) {
+                        JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                // Algorithms
+
+                } else if (e.getSource() == saveButton) {
+                    p = new ParameterWindow("s", this);
+                    p.setVisible(true);
+
+                } else if (e.getSource() == loadButton) {
+                    p = new ParameterWindow("l", this);
+                    p.setBounds(380, 80, 550, 80);
+                    p.setVisible(true);
 
 
-        } else if (e.getSource() == removeNodeButton) {  //V
+                } else if (e.getSource() == shortestPath) {
+                    p = new ParameterWindow("SP", this);
+                    p.setVisible(true);
 
-            String id = JOptionPane.showInputDialog("Which Node delete?");
-            try {
-                int idDelete = Integer.parseInt(id);
+                } else if (e.getSource() == shortestPathDist) {
+                    p = new ParameterWindow("SPD", this);
+                    p.setVisible(true);
 
-                graph_algo.getGraph().removeNode(idDelete);
-            }catch (IllegalArgumentException exception){
-                JOptionPane.showMessageDialog(null,"The ID should be numbers","Wrong!",JOptionPane.ERROR_MESSAGE);
+                } else if (e.getSource() == tspButton) {
+
+                } else if (e.getSource() == isConnected) {
+
+                    String T = "Yay! The Graph is Connected!";
+                    String F = "Nope! Not Connected... Sorry :-(";
+                    String answer = (graph_algo.isConnected()) ? T : F;
+                    JOptionPane.showMessageDialog(null, answer, "is connected?", JOptionPane.CLOSED_OPTION);
+
+                } else if (e.getSource() == getEdgeSize) {  //V
+
+                    int edge_size = graph_algo.getGraph().edgeSize();
+                    String answer = ("There are " + edge_size + " Edges in this graph");
+                    JOptionPane.showMessageDialog(null, answer, "No. Of Edges:", JOptionPane.CLOSED_OPTION);
+
+
+                } else if (e.getSource() == getNodeSize) {  //V
+
+                    int node_size = graph_algo.getGraph().nodeSize();
+                    String answer = ("There are " + node_size + " Nodes in this graph");
+                    JOptionPane.showMessageDialog(null, answer, "No. Of Nodes:", JOptionPane.CLOSED_OPTION);
+
+                } else if (e.getSource() == center) {
+
+                    int center = graph_algo.center().getKey();
+                    String answer = (" The ID number of center vertex is: " + center);
+                    JOptionPane.showMessageDialog(null, answer, "Center:", JOptionPane.CLOSED_OPTION);
+
+                }
             }
-
-//            p = new ParameterWindow("RN", this);
-//            p.setVisible(true);
-
-        } else if (e.getSource() == tspButton) {
-
-
-//            p = new ParameterWindow("TSP", this);
-//            p.setVisible(true);
-
-        } else if (e.getSource() == isConnected) {
-
-//            response.setText(answer);
-//            response.setBounds(500, 40, response.getPreferredSize().width, response.HEIGHT);
-//            response.setFont(new Font("ComicSans", Font.BOLD, 50));
-//            response.setVisible(true);
-//            this.add(response);
-
-            String T = "Yay! The Graph is Connected!";
-            String F = "Nope! Not Connected... Sorry :-(";
-            String answer = (graph_algo.isConnected()) ? T : F;
-            JOptionPane.showMessageDialog(null,answer,"is connected?",JOptionPane.CLOSED_OPTION);
-
-        } else if (e.getSource() == getEdgeSize) {  //V
-
-            int edge_size = graph_algo.getGraph().edgeSize();
-            String answer = ("There are " + edge_size + " Edges in this graph");
-            JOptionPane.showMessageDialog(null,answer,"No. Of Edges:",JOptionPane.CLOSED_OPTION);
-
-
-        } else if (e.getSource() == getNodeSize) {  //V
-
-            int node_size = graph_algo.getGraph().nodeSize();
-            String answer = ("There are " + node_size + " Nodes in this graph");
-            JOptionPane.showMessageDialog(null,answer,"No. Of Nodes:",JOptionPane.CLOSED_OPTION);
-
-        } else if (e.getSource() == center) {
-
-            int center = graph_algo.center().getKey();
-            String answer = (" The ID number of center vertex is: " + center);
-            JOptionPane.showMessageDialog(null,answer,"Center:",JOptionPane.CLOSED_OPTION);
-
         }
     }
+
 
     public void save(String path) {
         graph_algo.save(path);
@@ -232,11 +261,6 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
         graph_algo = new GraphAlgorithm();
         graph_algo.load(path);
         System.out.println(graph_algo.getGraph());
-    }
-
-
-    public static void main(String[] args) {
-        new GraphRepresentationWindow();
     }
 
     @Override
