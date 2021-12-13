@@ -143,9 +143,9 @@ public class DWGraph implements DirectedWeightedGraph {
             maxX = n.getLocation().x();
         }
         if (n.getLocation().y() < minY) {
-            minX = n.getLocation().y();
+            minY = n.getLocation().y();
         } else if (n.getLocation().y() > maxY) {
-            maxX = n.getLocation().y();
+            maxY = n.getLocation().y();
         }
     }
 
@@ -216,8 +216,29 @@ public class DWGraph implements DirectedWeightedGraph {
         if (nodes.containsKey(key)) {
             node_size--;
             MC++;
+            NodeData removed = nodes.remove(key);
+            updateMinMax(key);
+            return removed;
         }
-        return nodes.remove(key);
+        return null;
+    }
+
+    private void updateMinMax(int key){
+        Node node = (Node) getNode(key);
+        double x = node.getLocation().x(), y = node.getLocation().y();
+        if (x == maxX || x == minX || y == minY || y == maxY){
+            minX = Double.MAX_VALUE;
+            maxX = Double.MIN_VALUE;
+            minY = Double.MAX_VALUE;
+            maxY = Double.MIN_VALUE;
+            Iterator<NodeData> x_update = nodeIter();
+            while (x_update.hasNext()){
+                if (x_update.next().getLocation().x() < minX) minX = x_update.next().getLocation().x();
+                if (x_update.next().getLocation().x() > maxX) maxX = x_update.next().getLocation().x();
+                if (x_update.next().getLocation().y() < minY) minY = x_update.next().getLocation().y();
+                if (x_update.next().getLocation().y() > maxY) maxY = x_update.next().getLocation().y();
+            }
+        }
     }
 
     @Override

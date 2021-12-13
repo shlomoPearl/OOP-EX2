@@ -27,26 +27,134 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
 
     api.GraphAlgorithm graph_algo = new GraphAlgorithm();
     DWGraph graph = getGraph_algo();
-    GraphPainter painter;
+    // GraphPainter painter;
 
-    private double x_factor;
-    private double y_factor;
+    private double x_factor = 0;
+    private double y_factor = 0;
 
     public GraphRepresentationWindow() {
+        graph_algo.init(new DWGraph());
+        graph_algo.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G1.json");
+
         this.setTitle("Directed Weighted Graph Representation");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        graph_algo.init(new DWGraph());
         this.setVisible(true);
         addMenu();
-        this.painter = new GraphPainter((DWGraph) graph_algo.getGraph());
-        this.add(painter);
-        //graph_algo.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G1.json");
-
     }
 
     public DWGraph getGraph_algo() {
         return (DWGraph) this.graph_algo.getGraph();
+    }
+
+    @Override
+    public void paint(Graphics canvas) {
+        int w = this.getWidth();
+        int h = this.getHeight();
+        updateScale();
+        Image buffer_image;
+        Graphics buffer_graphics;
+        // Create a new "canvas"
+        buffer_image = createImage(w, h);
+        buffer_graphics = buffer_image.getGraphics();
+
+        // Draw on the new "canvas"
+        paintComponents(buffer_graphics);
+
+        // "Switch" the old "canvas" for the new one
+        canvas.drawImage(buffer_image, 0, 0, this);
+    }
+
+
+    /**
+     * painting the graph, pokemons, agent and stats.
+     *
+     * @param canvas
+     */
+    @Override
+    public void paintComponents(Graphics canvas) {
+        updateScale();
+        super.paintComponents(canvas);
+        int w = this.getWidth();
+        int h = this.getHeight();
+        canvas.setColor(new Color(255, 242, 249));
+        canvas.fillRect(0, 0, w, h);
+        Font font = new Font("Monospaced", Font.BOLD | Font.ITALIC, 17);
+        canvas.setFont(font);
+        canvas.setFont(canvas.getFont().deriveFont(Font.PLAIN, 14));
+        drawGraph(canvas);
+
+    }
+
+    private void updateScale() {
+        double abs_x = Math.abs(getGraph_algo().getMaxX() - getGraph_algo().getMinX());
+        double abs_y = Math.abs(getGraph_algo().getMaxY() - getGraph_algo().getMinY());
+        x_factor = ((double) this.getWidth() - 100) / abs_x;
+        y_factor = ((double) this.getHeight() - 100) / abs_y;
+    }
+
+
+    public void drawGraph(Graphics g) {
+        Iterator<NodeData> nodeIter = getGraph_algo().nodeIter();
+        while (nodeIter.hasNext()) {
+            Node node = (Node) nodeIter.next();
+            g.setColor(Color.BLACK);
+            drawNode(node, g);
+
+        }
+        Iterator<EdgeData> edgeIter = getGraph_algo().edgeIter();
+        while (edgeIter.hasNext()) {
+            Edge edge = (Edge) edgeIter.next();
+            g.setColor(new Color(0, 200, 0));
+            drawEdge(edge, g);
+        }
+
+    }
+
+    private void drawNode(Node node, Graphics g) {
+
+        // x and y to draw to
+        int x = (int) (x_factor * (node.getLocation().x() - getGraph_algo().getMinX())) + 40;
+        int y = (int) (y_factor * (node.getLocation().y() - getGraph_algo().getMinY())) + 80;
+        int id = node.getKey();
+        g.fillOval(x, y, 20, 20);
+        g.setColor(Color.RED);
+        Font f = new Font("ComicSans", Font.BOLD, 15);
+        g.setFont(f);
+        g.drawString("" + id, x, y - 5);
+    }
+
+    private void drawEdge(Edge edge, Graphics g) {
+        Node source = (Node) getGraph_algo().getNode(edge.getSrc());
+        Node destination = (Node) getGraph_algo().getNode(edge.getDest());
+
+        int x1 = (int) (x_factor * (source.getLocation().x() - getGraph_algo().getMinX())) + 50;
+        int y1 = (int) (y_factor * (source.getLocation().y() - getGraph_algo().getMinY())) + 90;
+        int x2 = (int) (x_factor * (destination.getLocation().x() - getGraph_algo().getMinX())) + 50;
+        int y2 = (int) (y_factor * (destination.getLocation().y() - getGraph_algo().getMinY())) + 90;
+
+        drawArrowLine(g, x1, y1, x2, y2, 10, 7);
+    }
+
+    private void drawArrowLine(Graphics g, int x1, int y1, int x2, int y2, int d, int h) {
+        int dx = x2 - x1, dy = y2 - y1;
+        double D = Math.sqrt(dx * dx + dy * dy);
+        double xm = D - d, xn = xm, ym = h, yn = -h, x;
+        double sin = dy / D, cos = dx / D;
+
+        x = xm * cos - ym * sin + x1;
+        ym = xm * sin + ym * cos + y1;
+        xm = x;
+
+        x = xn * cos - yn * sin + x1;
+        yn = xn * sin + yn * cos + y1;
+        xn = x;
+
+        int[] xpoints = {x2, (int) xm, (int) xn};
+        int[] ypoints = {y2, (int) ym, (int) yn};
+
+        g.drawLine(x1, y1, x2, y2);
+        g.fillPolygon(xpoints, ypoints, 3);
     }
 
 
@@ -103,7 +211,6 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
     }
 
 
-
     @Override
     public void actionPerformed(ActionEvent e) {
 
@@ -138,10 +245,11 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
             if (add_node_result == JOptionPane.OK_OPTION) {
                 try {
                     int id = Integer.parseInt(key.getText());
-                    int x_co = Integer.parseInt(x.getText());
-                    int y_co = Integer.parseInt(y.getText());
-                    int z_co = Integer.parseInt(z.getText());
+                    double x_co = Double.parseDouble(x.getText());
+                    double y_co = Double.parseDouble(y.getText());
+                    double z_co = Double.parseDouble(z.getText());
                     graph_algo.getGraph().addNode(new Node(id, new Location(x_co, y_co, z_co)));
+                    repaint();
 
                 } catch (NumberFormatException nfe) {
                     JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
@@ -179,6 +287,7 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
                     double w = Double.parseDouble(add_edge_weight.getText());
 
                     graph_algo.getGraph().connect(src, dest, w);
+                    repaint();
                 } catch (NumberFormatException nfe) {
                     JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
                 } catch (IllegalArgumentException iae) {
@@ -209,6 +318,7 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
                     int src = Integer.parseInt(remove_source.getText());
                     int dest = Integer.parseInt(remove_destination.getText());
                     graph_algo.getGraph().removeEdge(src, dest);
+                    repaint();
                 } catch (NumberFormatException nfe) {
                     JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
                 } catch (IllegalArgumentException iae) {
@@ -232,6 +342,7 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
                 try {
                     int id = Integer.parseInt(remove_key.getText());
                     graph_algo.getGraph().removeNode(id);
+                    repaint();
                 } catch (NumberFormatException nfe) {
                     JOptionPane.showMessageDialog(null, "Invalid Input!", "Error!", JOptionPane.ERROR_MESSAGE);
                 } catch (IllegalArgumentException iae) {
@@ -387,8 +498,8 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
     protected void load(String path) {
         graph_algo = new GraphAlgorithm();
         graph_algo.load(path);
-       // GraphPainter GP = new GraphPainter((DWGraph) graph_algo.getGraph());
-        painter.repaint();
+        repaint();
+        // GraphPainter GP = new GraphPainter((DWGraph) graph_algo.getGraph());
 
     }
 
