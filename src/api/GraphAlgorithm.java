@@ -75,7 +75,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
                 try {
                     while (edgeIter.hasNext()) {
                         Node neighbour = (Node) graph.getNode(edgeIter.next().getDest());
-                        if (neighbour.getTag() != 1) {
+                        if (neighbour !=  null && neighbour.getTag() != 1) {
                             not_visited.add(neighbour); // add not visited neighbours to stack
                         }
                     }

@@ -22,49 +22,49 @@ public class main {
     }
 
     public static void main(String[] args) {
-//
-//        DWGraph graph2 = new DWGraph();
-//        DWGraph graph1 = new DWGraph();
-//        Node n1 = new Node(1, new Location(0, 0, 0));
-//        Node n2 = new Node(2, new Location(1, 1, 0));
-//        Node n3 = new Node(3, new Location(1, 1, 0));
-//        Node n4 = new Node(4, new Location(1, 1, 0));
-//        Node n5 = new Node(5, new Location(1, 1, 0));
-//        Node n6 = new Node(6, new Location(1, 1, 0));
-//
-//        graph1.addNode(n1);
-//        graph1.addNode(n2);
-//        graph1.addNode(n3);
-//        graph1.addNode(n4);
-//        graph1.addNode(n5);
-//        graph1.addNode(n6);
-//        graph1.connect(n1.getKey(), n2.getKey(), 2);
-//        graph1.connect(n1.getKey(), n3.getKey(), 4);
-//        graph1.connect(n2.getKey(), n4.getKey(), 7);
-//        graph1.connect(n2.getKey(), n3.getKey(), 1);
-//        graph1.connect(n4.getKey(), n6.getKey(), 1);
-//        graph1.connect(n3.getKey(), n5.getKey(), 3);
-//        graph1.connect(n3.getKey(), n1.getKey(), 3);
-//        graph1.connect(n5.getKey(), n4.getKey(), 7);
-//        graph1.connect(n5.getKey(), n6.getKey(), 1);
-//        graph1.connect(n5.getKey(), n3.getKey(), 5);
-//        graph1.connect(n6.getKey(), n5.getKey(), 5);
-//        graph1.connect(n5.getKey(), n6.getKey(), 1);
-//        graph1.connect(n6.getKey(), n4.getKey(), 1);
-//
-//        graph2.addNode(n1);
-//        graph2.addNode(n2);
-//        graph2.addNode(n3);
-//        graph2.connect(n1.getKey(), n2.getKey(), 1);
-//        graph2.connect(n1.getKey(), n3.getKey(), 1);
-//        graph2.connect(n2.getKey(), n1.getKey(), 5);
-//        graph2.connect(n2.getKey(), n3.getKey(), 5);
-//        graph2.connect(n3.getKey(), n2.getKey(), 5);
-//        graph2.connect(n3.getKey(), n1.getKey(), 5);
-//
-//        GraphAlgorithm g = new GraphAlgorithm();
-//        g.init(graph2);
-//        System.out.println(g.center());
+
+        DWGraph graph2 = new DWGraph();
+        DWGraph graph1 = new DWGraph();
+        Node n1 = new Node(1, new Location(0, 0, 0));
+        Node n2 = new Node(2, new Location(1, 1, 0));
+        Node n3 = new Node(3, new Location(1, 1, 0));
+        Node n4 = new Node(4, new Location(1, 1, 0));
+        Node n5 = new Node(5, new Location(1, 1, 0));
+        Node n6 = new Node(6, new Location(1, 1, 0));
+
+        graph1.addNode(n1);
+        graph1.addNode(n2);
+        graph1.addNode(n3);
+        graph1.addNode(n4);
+        graph1.addNode(n5);
+        graph1.addNode(n6);
+        graph1.connect(n1.getKey(), n2.getKey(), 2);
+        graph1.connect(n1.getKey(), n3.getKey(), 4);
+        graph1.connect(n2.getKey(), n4.getKey(), 7);
+        graph1.connect(n2.getKey(), n3.getKey(), 1);
+        graph1.connect(n4.getKey(), n6.getKey(), 1);
+        graph1.connect(n3.getKey(), n5.getKey(), 3);
+        graph1.connect(n3.getKey(), n1.getKey(), 3);
+        graph1.connect(n5.getKey(), n4.getKey(), 7);
+        graph1.connect(n5.getKey(), n6.getKey(), 1);
+        graph1.connect(n5.getKey(), n3.getKey(), 5);
+        graph1.connect(n6.getKey(), n5.getKey(), 5);
+        graph1.connect(n5.getKey(), n6.getKey(), 1);
+        graph1.connect(n6.getKey(), n4.getKey(), 1);
+
+        graph2.addNode(n1);
+        graph2.addNode(n2);
+        graph2.addNode(n3);
+        graph2.connect(n1.getKey(), n2.getKey(), 1);
+        graph2.connect(n1.getKey(), n3.getKey(), 1);
+        graph2.connect(n2.getKey(), n1.getKey(), 5);
+        graph2.connect(n2.getKey(), n3.getKey(), 5);
+        graph2.connect(n3.getKey(), n2.getKey(), 5);
+        graph2.connect(n3.getKey(), n1.getKey(), 5);
+
+        GraphAlgorithm g = new GraphAlgorithm();
+        g.init(graph2);
+        System.out.println(g.center());
 //        g.load("C:/Users/shlom/IdeaProjects/Ex2/check.json");
 //        g.save("Dovi.json");
 //        System.out.println(g.getGraph());
@@ -85,13 +85,6 @@ public class main {
 //        System.out.println(time);
 //        System.out.println(g.shortestPath(1,223));
 //        System.out.println(g.shortestPathDist(1,223));
-
-//        JLabel label = new JLabel();
-//        label.setText("True");
-//        label.setHorizontalTextPosition(JLabel.CENTER);
-//        label.setVerticalTextPosition(JLabel.TOP);
-//        label.setForeground(new Color(125,200,200));
-//        label.setFont(new Font("MyFont",Font.PLAIN,20));
 
 
 //        GraphAlgorithm g1 =new GraphAlgorithm();
@@ -124,9 +117,5 @@ public class main {
 //        System.out.println("center g2: "+a);
 //        System.out.println(g1.shortestPath(1,1));
         //System.out.println(g1);
-
-//        GraphAlgorithm g = new GraphAlgorithm();
-//        g.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/10000Nodes.json");
-//        System.out.println(g.isConnected());
     }
 }
