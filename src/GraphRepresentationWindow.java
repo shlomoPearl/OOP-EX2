@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class GraphRepresentationWindow extends JFrame implements ActionListener, MouseListener, MouseMotionListener {
+
     ParameterWindow p;
 
     MenuItem loadButton = new MenuItem("Load Graph");
@@ -25,6 +26,9 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
     MenuItem getEdgeSize = new MenuItem("No. of Edges");
 
     api.GraphAlgorithm graph_algo = new GraphAlgorithm();
+    DWGraph graph = getGraph_algo();
+    GraphPainter painter;
+
     private double x_factor;
     private double y_factor;
 
@@ -35,15 +39,16 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
         graph_algo.init(new DWGraph());
         this.setVisible(true);
         addMenu();
-        JPanel panel = new JPanel();
-        panel.setBackground(new Color(150,220,223));
-        this.add(panel);
-        graph_algo.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\1000Nodes.json");
+        this.painter = new GraphPainter((DWGraph) graph_algo.getGraph());
+        this.add(painter);
+        //graph_algo.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G1.json");
+
     }
 
     public DWGraph getGraph_algo() {
         return (DWGraph) this.graph_algo.getGraph();
     }
+
 
     public static void main(String[] args) {
         new GraphRepresentationWindow();
@@ -93,41 +98,11 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
         algorithmsMenu.add(center);
         algorithmsMenu.add(getNodeSize);
         algorithmsMenu.add(getEdgeSize);
-    }
 
-    private void updateScale(){
-        double abs_x = Math.abs(((DWGraph)graph_algo.getGraph()).getMaxX()-((DWGraph)graph_algo.getGraph()).getMinX());
-        double abs_y = Math.abs(((DWGraph)graph_algo.getGraph()).getMaxY()-((DWGraph)graph_algo.getGraph()).getMinY());
-        x_factor = this.getWidth()/abs_x;
-        y_factor = this.getHeight()/abs_y;
-    }
-
-//    public void paintComponent(Graphics g){
-//        DrawGraph(g);
-//    }
-//
-//    private void DrawGraph(){
-//        Iterator<NodeData> nodeIter = this.graph.nodeIter();
-//        while (nodeIter.hasNext()){
-//            Node node = (Node) nodeIter.next();
-//            drawNode(node,g);
-//        }
-//        Iterator<EdgeData> edgeIter = this.graph.edgeIter();
-//        while (edgeIter.hasNext()){
-//            Edge edge = (Edge) edgeIter.next();
-//            drawEdge(edge,g);
-//        }
-//    }
-    private void drawNode(Node node, Graphics g){
-        int x = (int) node.getLocation().x();
-        int y = (int) node.getLocation().y();
-        int id = node.getKey();
-        g.setColor(new Color(0,0,0));
-        g.drawOval(x,y,30,30);
-    }
-    private void drawEdge(Edge edge,Graphics g){
 
     }
+
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -160,7 +135,6 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
                     null, add_node_input_panel,
                     "Add Vertex:",
                     JOptionPane.OK_CANCEL_OPTION);
-            System.out.println(JOptionPane.OK_OPTION);
             if (add_node_result == JOptionPane.OK_OPTION) {
                 try {
                     int id = Integer.parseInt(key.getText());
@@ -277,6 +251,7 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
             p = new ParameterWindow("l", this);
             p.setBounds(380, 80, 550, 80);
             p.setVisible(true);
+
 
             // Shortest path
 
@@ -406,13 +381,15 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
 
     public void save(String path) {
         graph_algo.save(path);
-        //System.out.println(graph_algo.getGraph());
+
     }
 
     protected void load(String path) {
         graph_algo = new GraphAlgorithm();
         graph_algo.load(path);
-        //System.out.println(graph_algo.getGraph());
+       // GraphPainter GP = new GraphPainter((DWGraph) graph_algo.getGraph());
+        painter.repaint();
+
     }
 
     @Override
