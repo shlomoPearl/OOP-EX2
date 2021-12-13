@@ -22,12 +22,6 @@ public class GraphPainter extends JPanel implements ActionListener {
         updateScale();
     }
 
-    private void updateScale() {
-        double abs_x = Math.abs(graph.getMaxX() - graph.getMinX());
-        double abs_y = Math.abs(graph.getMaxY() - graph.getMinY());
-        x_factor = this.getWidth() / abs_x;
-        y_factor = this.getHeight() / abs_y;
-    }
 
 
     @Override
@@ -37,6 +31,14 @@ public class GraphPainter extends JPanel implements ActionListener {
         updateScale();
         drawGraph(g);
     }
+
+    private void updateScale() {
+        double abs_x = Math.abs(graph.getMaxX() - graph.getMinX());
+        double abs_y = Math.abs(graph.getMaxY() - graph.getMinY());
+        x_factor = this.getWidth() / abs_x;
+        y_factor = this.getHeight() / abs_y;
+    }
+
 
     public void drawGraph(Graphics g) {
         DWGraph dwg = this.graph;
@@ -60,7 +62,7 @@ public class GraphPainter extends JPanel implements ActionListener {
         int y = (int) (y_factor * node.getLocation().y());
         int id = node.getKey();
         String pos = "ID: " + id + "," + x + "," + y;
-        g.drawOval(x - 10, y - 10, 20, 20);
+        g.fillOval(x - 10, y - 10, 10, 10);
         g.drawString(pos, x - 10, y - 25);
         repaint();
     }
