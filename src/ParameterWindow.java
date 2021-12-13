@@ -5,22 +5,12 @@ import java.awt.event.ActionListener;
 
 public class ParameterWindow extends JFrame implements ActionListener {
 
-    int width;
-    int length;
 
     JTextField text = new JTextField();
     GraphRepresentationWindow GRW;
 
     JButton saveButton = new JButton("Save");
     JButton loadButton = new JButton("Load");
-    JButton SPButton = new JButton("Submit");
-    JButton SPDButton = new JButton("Submit");
-    JButton ANButton = new JButton("Add");
-    JButton AEButton = new JButton("Add");
-    JButton RNButton = new JButton("Remove");
-    JButton REButton = new JButton("Remove");
-    JButton TSPButton = new JButton("Submit");
-
 
 
     public ParameterWindow(String flag, GraphRepresentationWindow GRW){
@@ -46,26 +36,7 @@ public class ParameterWindow extends JFrame implements ActionListener {
             this.add(text);
             this.pack();
         }
-        else if(flag.equals("AN")){
-            this.setLayout(new FlowLayout());
-            text.setPreferredSize(new Dimension(400,35));
-            ANButton.addActionListener(this);
-            this.add(ANButton);
-            this.add(new Label("Key:"));
-            this.add(new Label("Location:"));
-            this.add(text);
-            this.pack();
-        }
-        else if(flag.equals("SPD")){
-            this.setLayout(new FlowLayout());
-            text.setPreferredSize(new Dimension(400,35));
-            SPDButton.addActionListener(this);
-            this.add(SPDButton);
-            this.add(new Label("From:"));
-            this.add(new Label("To:"));
-            this.add(text);
-            this.pack();
-        }
+
     }
 
     @Override
