@@ -67,22 +67,22 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
 
 
     /**
-     * painting the graph, pokemons, agent and stats.
+     * painting the graph
      *
-     * @param canvas
+     * @param g
      */
     @Override
-    public void paintComponents(Graphics canvas) {
+    public void paintComponents(Graphics g) {
         updateScale();
-        super.paintComponents(canvas);
+        super.paintComponents(g);
         int w = this.getWidth();
         int h = this.getHeight();
-        canvas.setColor(new Color(255, 242, 249));
-        canvas.fillRect(0, 0, w, h);
+        g.setColor(new Color(255, 242, 247));
+        g.fillRect(0, 0, w, h);
         Font font = new Font("Monospaced", Font.BOLD | Font.ITALIC, 17);
-        canvas.setFont(font);
-        canvas.setFont(canvas.getFont().deriveFont(Font.PLAIN, 14));
-        drawGraph(canvas);
+        g.setFont(font);
+        g.setFont(g.getFont().deriveFont(Font.PLAIN, 14));
+        drawGraph(g);
 
     }
 
