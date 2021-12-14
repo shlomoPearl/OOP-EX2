@@ -2,7 +2,8 @@
 Written in: Java.  
 
 ## About:
-This project which deals with the Abstraction, Design and Implementation of a Directed Weighted Graph. In addition, this projects includes a GUI which represents the graph, as dots and arrows, in a scale proportionate to the geographic locations of the Nodes in the graph
+This project which deals with the Abstraction, Design and Implementation of a Directed Weighted Graph. In addition, this projects includes a GUI which represents the graph, as dots and arrows, in a scale proportionate to the geographic locations of the Nodes in the graph.
+
 This specific Implementation of a Directed Weighted Graph is revolved around the abstraction of road-maps and the way SAT-NAV's typically represent the world around us. each Node may refer to a city or a junction, and Edge may refer to a road between two places, and the Egde's weight may refer to the distance or time to be travelled via said road. 
 ### Data Structures:  
 
