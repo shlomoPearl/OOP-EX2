@@ -179,7 +179,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         double min_weight = Double.MAX_VALUE;
         if (!map.isEmpty()) {
             for (Node current : map.values()) {
-                if (current.getInWeight() < min_weight) {
+                if (current.getInWeight() <= min_weight) {
                     min_weight = current.getInWeight();
                     result = current.getKey();
                 }
@@ -203,6 +203,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         }
         return unCheckedNodes;
     }
+
 
     /**
      * a certain variation of the well known Dijkstra algorithm, which can be used to find the shortest path between
@@ -348,7 +349,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     }
 
     /**
-     * assists the isConnected func. by returning a pair of vertices out of a given collection, which
+     * assists the tsp func. by returning a pair of vertices out of a given collection, which
      * are the two closest two each other (meaning they are the two with the shortest path distance between
      * them, out of all possible pairs from the given collection).
      *
@@ -374,7 +375,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     }
 
     /**
-     * assists the isConnected func. by returning the vertex, out of a given collection, which
+     * assists the tsp func. by returning the vertex, out of a given collection, which
      * has the shortest path distance from a given source vertex.
      *
      * @param unCheckedNodes - a list of vertices
