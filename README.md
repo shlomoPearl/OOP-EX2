@@ -39,3 +39,6 @@ This specific Implementation of a Directed Weighted Graph is revolved around the
 The Graphical User Interface of this project represents a given graph in a scale determined by the actual geographic locations that the Node of the graph represent. It also allows the user to use any of the above functions and algorithms.  
 
 example:
+
+![example](https://user-images.githubusercontent.com/73857923/146082818-a0e9ba8a-d7d7-4746-b3d3-c2194046a0a6.png)
+
