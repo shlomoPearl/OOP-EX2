@@ -45,15 +45,15 @@ class GraphAlgorithmTest {
     void copy() {
         graph1.init(graph);
         DWGraph copy = (DWGraph) graph1.copy();
-
         assertEquals(copy.toString(), graph1.getGraph().toString());
+        assertNotSame(copy,graph1);
     }
 
     @org.junit.jupiter.api.Test
     void isConnected() {
-        graph1.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G1.json");
-        graph2.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G2.json");
-        graph3.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G3.json");
+        graph1.load("G1.json");
+        graph2.load("G2.json");
+        graph3.load("G3.json");
 
         boolean a = graph1.isConnected();
         boolean b = graph2.isConnected();
@@ -112,9 +112,9 @@ class GraphAlgorithmTest {
         assertEquals(-1, b);
         assertEquals(3, c);
 
-        graph1.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G1.json");
-        graph2.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G2.json");
-        graph3.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G3.json");
+        graph1.load("G1.json");
+        graph2.load("G2.json");
+        graph3.load("G3.json");
 
         a = graph1.shortestPathDist(2, 10);
         b = graph2.shortestPathDist(2, 10);
@@ -162,17 +162,12 @@ class GraphAlgorithmTest {
     @org.junit.jupiter.api.Test
     void center() {
 
-//        graph1.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G1.json");
-//        graph2.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G2.json");
-//        graph3.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/G3.json");
-//        graph4.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/1000Nodes.json");
-        graph5.load("C:/Users/Hp/Documents/GitHub/OOP-EX2/data/10000Nodes.json");
-
-//        assertEquals(8, graph1.center().getKey());
-//        assertEquals(0, graph2.center().getKey());
-//        assertEquals(40, graph3.center().getKey());
-//        assertEquals(362, graph4.center().getKey());
-        assertEquals(50, graph5.center().getKey());
+        graph1.load("G1.json");
+        graph2.load("G2.json");
+        graph3.load("G3.json");
+        assertEquals(8, graph1.center().getKey());
+        assertEquals(0, graph2.center().getKey());
+        assertEquals(40, graph3.center().getKey());
     }
 
     @org.junit.jupiter.api.Test
@@ -217,33 +212,9 @@ class GraphAlgorithmTest {
         assertEquals(s, graph4.tsp(check).toString());
     }
 
-    @org.junit.jupiter.api.Test
-    void save() {
-
-        DWGraph graph = new DWGraph();
-
-        Node n1 = new Node(1, new Location(0, 0, 0));
-        Node n2 = new Node(2, new Location(1, 1, 0));
-        Node n3 = new Node(3, new Location(1, 1, 0));
-
-        graph.addNode(n1);
-        graph.addNode(n2);
-        graph.addNode(n3);
-
-        graph.connect(n1.getKey(), n2.getKey(), 1);
-        graph.connect(n1.getKey(), n3.getKey(), 1);
-        graph.connect(n2.getKey(), n1.getKey(), 5);
-        graph.connect(n2.getKey(), n3.getKey(), 5);
-        graph.connect(n3.getKey(), n2.getKey(), 5);
-        graph.connect(n3.getKey(), n1.getKey(), 5);
-
-        graph1.init(graph);
-
-        graph1.save("check.json");
-    }
 
     @org.junit.jupiter.api.Test
-    void load() {
+    void saveNload() {
 
         DWGraph graph = new DWGraph();
 
@@ -263,12 +234,11 @@ class GraphAlgorithmTest {
         graph.connect(n3.getKey(), n1.getKey(), 5);
 
         GraphAlgorithm g1 = new GraphAlgorithm();
-
-        g1.load("C:/Users/shlom/IdeaProjects/Ex2/check.json");
-
+        g1.init(graph);
+        g1.save("test.json");
+        g1.load("test.json");
         String st = g1.getGraph().toString();
         String st2 = graph.toString();
-
         assertEquals(st, st2);
     }
 }
