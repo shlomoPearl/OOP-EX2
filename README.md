@@ -48,3 +48,5 @@ example:
 
 ![example](https://user-images.githubusercontent.com/73857923/146082818-a0e9ba8a-d7d7-4746-b3d3-c2194046a0a6.png)
 
+**###Runnig the Program using jar file via terminal:
+**java -jar Ex2.jar <path of  JSON file to load as graph>
