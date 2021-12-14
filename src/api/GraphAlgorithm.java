@@ -179,7 +179,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
         double min_weight = Double.MAX_VALUE;
         if (!map.isEmpty()) {
             for (Node current : map.values()) {
-                if (current.getInWeight() < min_weight) {
+                if (current.getInWeight() <= min_weight) {
                     min_weight = current.getInWeight();
                     result = current.getKey();
                 }
