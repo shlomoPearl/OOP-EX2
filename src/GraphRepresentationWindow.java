@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class GraphRepresentationWindow extends JFrame implements ActionListener, MouseListener, MouseMotionListener {
+public class GraphRepresentationWindow extends JFrame implements ActionListener {
 
     ParameterWindow p;
 
@@ -32,7 +32,6 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
 
     public GraphRepresentationWindow() {
         graph_algo.init(new DWGraph());
-//        graph_algo.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G1.json");
         this.setTitle("Directed Weighted Graph Representation");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -85,8 +84,6 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
         int h = this.getHeight();
         g.setColor(new Color(255, 242, 247));
         g.fillRect(0, 0, w, h);
-//        Font font = new Font("Monospaced", Font.BOLD | Font.ITALIC, 17);
-//        g.setFont(font);
         g.setFont(g.getFont().deriveFont(Font.PLAIN, 14));
         drawGraph(g);
 
@@ -164,9 +161,6 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
     }
 
 
-//    public static void main(String[] args) {
-//        new GraphRepresentationWindow();
-//    }
 
     private void addMenu() {
         MenuBar bar = new MenuBar();
@@ -435,6 +429,8 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
                 }
             }
 
+            //TSP:
+
         } else if (e.getSource() == tspButton) {
 
             JTextField tsp_list = new JTextField(50);
@@ -507,38 +503,4 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
         repaint();
     }
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-
-    }
 }
