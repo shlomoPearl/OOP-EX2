@@ -26,16 +26,22 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
     MenuItem getEdgeSize = new MenuItem("No. of Edges");
 
     api.GraphAlgorithm graph_algo = new GraphAlgorithm();
-    DWGraph graph = getGraph_algo();
-    // GraphPainter painter;
 
     private double x_factor = 0;
     private double y_factor = 0;
 
     public GraphRepresentationWindow() {
         graph_algo.init(new DWGraph());
-        graph_algo.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G1.json");
+//        graph_algo.load("C:\\Users\\shlom\\IdeaProjects\\Ex2\\data\\G1.json");
+        this.setTitle("Directed Weighted Graph Representation");
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setVisible(true);
+        addMenu();
+    }
 
+    public GraphRepresentationWindow(DirectedWeightedGraphAlgorithms algo) {
+        graph_algo = (GraphAlgorithm) algo;
         this.setTitle("Directed Weighted Graph Representation");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -79,8 +85,8 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
         int h = this.getHeight();
         g.setColor(new Color(255, 242, 247));
         g.fillRect(0, 0, w, h);
-        Font font = new Font("Monospaced", Font.BOLD | Font.ITALIC, 17);
-        g.setFont(font);
+//        Font font = new Font("Monospaced", Font.BOLD | Font.ITALIC, 17);
+//        g.setFont(font);
         g.setFont(g.getFont().deriveFont(Font.PLAIN, 14));
         drawGraph(g);
 
@@ -158,9 +164,9 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
     }
 
 
-    public static void main(String[] args) {
-        new GraphRepresentationWindow();
-    }
+//    public static void main(String[] args) {
+//        new GraphRepresentationWindow();
+//    }
 
     private void addMenu() {
         MenuBar bar = new MenuBar();
@@ -499,8 +505,6 @@ public class GraphRepresentationWindow extends JFrame implements ActionListener,
         graph_algo = new GraphAlgorithm();
         graph_algo.load(path);
         repaint();
-        // GraphPainter GP = new GraphPainter((DWGraph) graph_algo.getGraph());
-
     }
 
     @Override
