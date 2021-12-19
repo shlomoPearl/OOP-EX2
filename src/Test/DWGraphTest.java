@@ -8,7 +8,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class DWGraphTest {
 
-    DWGraph graph1 = new DWGraph();
 
     Node n1 = new Node(1, new Location(0, 0, 0));
     Node n2 = new Node(2, new Location(1, 1, 0));
@@ -17,14 +16,14 @@ class DWGraphTest {
     Node n5 = new Node(5, new Location(1, 1, 0));
     Node n6 = new Node(6, new Location(1, 1, 0));
 
+
     @Test
     void getNode() {
-
-        graph1.addNode(n1);
-        graph1.addNode(n2);
-
-        Node t1 = (Node) graph1.getNode(1);
-        Node t2 = (Node) graph1.getNode(2);
+        DWGraph g = new DWGraph();
+        g.addNode(n1);
+        g.addNode(n2);
+        Node t1 = (Node) g.getNode(1);
+        Node t2 = (Node) g.getNode(2);
 
         assertEquals(n1, t1);
         assertEquals(n2, t2);
@@ -32,133 +31,137 @@ class DWGraphTest {
 
     @Test
     void getEdge() {
+        DWGraph g = new DWGraph();
+        g.connect(n1.getKey(), n2.getKey(), 2);
+        g.connect(n1.getKey(), n3.getKey(), 1);
 
-        graph1.connect(n1.getKey(), n2.getKey(), 2);
-        graph1.connect(n1.getKey(), n3.getKey(), 1);
+        Edge e1 = (Edge) g.getEdge(1, 2);
 
-        Edge e1 = (Edge) graph1.getEdge(1, 2);
-
-        assertEquals(graph1.getEdge(n1.getKey(), n2.getKey()), e1);
+        assertEquals(g.getEdge(n1.getKey(), n2.getKey()), e1);
     }
 
     @Test
     void addNode() {
+        DWGraph g = new DWGraph();
+        assertEquals(0, g.nodeSize());
+        assertEquals(0, g.getMC());
 
-        assertEquals(0, graph1.nodeSize());
-        assertEquals(0, graph1.getMC());
+        g.addNode(n1);
 
-        graph1.addNode(n1);
+        assertEquals(1, g.nodeSize());
+        assertEquals(1, g.getMC());
 
-        assertEquals(1, graph1.nodeSize());
-        assertEquals(1, graph1.getMC());
+        g.addNode(n2);
+        g.addNode(n3);
+        g.addNode(n4);
+        g.addNode(n5);
+        g.addNode(n6);
 
-        graph1.addNode(n2);
-        graph1.addNode(n3);
-        graph1.addNode(n4);
-        graph1.addNode(n5);
-        graph1.addNode(n6);
-
-        assertEquals(6, graph1.nodeSize());
-        assertEquals(6, graph1.getMC());
+        assertEquals(6, g.nodeSize());
+        assertEquals(6, g.getMC());
     }
 
     @Test
     void connect() {
+        DWGraph g = new DWGraph();
+        g.addNode(n1);
+        g.addNode(n2);
+        g.addNode(n3);
+        g.connect(n1.getKey(), n2.getKey(), 2);
+        g.connect(n1.getKey(), n3.getKey(), 1);
 
-        graph1.connect(n1.getKey(), n2.getKey(), 2);
-        graph1.connect(n1.getKey(), n3.getKey(), 1);
+        Edge e1 = (Edge) g.getEdge(1, 2);
 
-        Edge e1 = (Edge) graph1.getEdge(1, 2);
-        Edge e2 = (Edge) graph1.getEdge(1,3);
-
-        assertEquals(2,graph1.edgeSize());
-        assertEquals(2,graph1.getMC());
+        assertEquals(2,g.edgeSize());
+        assertEquals(5,g.getMC());
         assertEquals(2,e1.getWeight());
     }
 
-    @Test
-    void nodeIter() {}
-
-    @Test
-    void edgeIter() {}
-
-    @Test
-    void testEdgeIter() {}
 
     @Test
     void removeNode() {
+        DWGraph g = new DWGraph();
+        g.removeNode(1);
 
-        graph1.removeNode(1);
+        assertEquals(0,g.nodeSize());
+        assertEquals(0,g.getMC());
 
-        assertEquals(0,graph1.nodeSize());
-        assertEquals(0,graph1.getMC());
+        g.addNode(n1);
+        g.addNode(n2);
+        g.removeNode(2);
 
-        graph1.addNode(n1);
-        graph1.addNode(n2);
-        graph1.removeNode(2);
-
-        assertEquals(1,graph1.nodeSize());
-        assertEquals(3,graph1.getMC());
+        assertEquals(1,g.nodeSize());
+        assertEquals(3,g.getMC());
     }
 
     @Test
     void removeEdge() {
+        DWGraph g = new DWGraph();
+        g.removeEdge(1,2);
+        assertEquals(0,g.edgeSize());
+        assertEquals(0,g.getMC());
 
-        graph1.removeEdge(1,2);
+        g.addNode(n1);
+        g.addNode(n2);
+        g.addNode(n3);
 
-        assertEquals(0,graph1.edgeSize());
-        assertEquals(0,graph1.getMC());
+        g.connect(n1.getKey(), n2.getKey(), 2);
+        g.connect(n1.getKey(), n3.getKey(), 1);
+        g.removeEdge(1,2);
 
-        graph1.connect(n1.getKey(), n2.getKey(), 2);
-        graph1.connect(n1.getKey(), n3.getKey(), 1);
-        graph1.removeEdge(1,2);
-
-        assertEquals(1,graph1.edgeSize());
-        assertEquals(3,graph1.getMC());
+        assertEquals(1,g.edgeSize());
+        assertEquals(6,g.getMC());
     }
 
     @Test
     void nodeSize() {
+        DWGraph g = new DWGraph();
+        assertEquals(0, g.nodeSize());
+        assertEquals(0, g.getMC());
 
-        assertEquals(0, graph1.nodeSize());
-        assertEquals(0, graph1.getMC());
+        g.addNode(n1);
 
-        graph1.addNode(n1);
-
-        assertEquals(1, graph1.nodeSize());
-        assertEquals(1, graph1.getMC());
+        assertEquals(1, g.nodeSize());
+        assertEquals(1, g.getMC());
     }
 
     @Test
     void edgeSize() {
+        DWGraph g = new DWGraph();
+        assertEquals(0,g.edgeSize());
+        assertEquals(0,g.getMC());
 
-        assertEquals(0,graph1.edgeSize());
-        assertEquals(0,graph1.getMC());
+        g.addNode(n1);
+        g.addNode(n2);
+        g.addNode(n3);
 
-        graph1.connect(n1.getKey(), n2.getKey(), 2);
-        graph1.connect(n1.getKey(), n3.getKey(), 1);
+        g.connect(n1.getKey(), n2.getKey(), 2);
+        g.connect(n1.getKey(), n3.getKey(), 1);
 
-        assertEquals(2,graph1.edgeSize());
-        assertEquals(2,graph1.getMC());
+        assertEquals(2,g.edgeSize());
+        assertEquals(5,g.getMC());
 
-        graph1.removeEdge(1,2);
+        g.removeEdge(1,2);
 
-        assertEquals(1,graph1.edgeSize());
-        assertEquals(3,graph1.getMC());
+        assertEquals(1,g.edgeSize());
+        assertEquals(6,g.getMC());
     }
 
     @Test
     void getMC() {
+        DWGraph g = new DWGraph();
+        assertEquals(0,g.getMC());
+        g.addNode(n1);
+        g.addNode(n2);
+        g.addNode(n3);
 
-        assertEquals(0,graph1.getMC());
+        g.connect(n1.getKey(), n2.getKey(), 2);
+        g.connect(n1.getKey(), n3.getKey(), 1);
 
-        graph1.connect(n1.getKey(), n2.getKey(), 2);
-        graph1.connect(n1.getKey(), n3.getKey(), 1);
+        assertEquals(5,g.getMC());
 
-        assertEquals(2,graph1.getMC());
+        g.removeEdge(1,2);
 
-        graph1.removeEdge(1,2);
-
-        assertEquals(3,graph1.getMC());
+        assertEquals(6,g.getMC());
     }
 }

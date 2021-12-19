@@ -10,11 +10,6 @@ public class Node implements NodeData {
     private int tag;
     private double inWeight;
     private int keyPrevNode;
-    private int edges_change_count = 0;
-
-    public int getEdges_change_count(){
-        return edges_change_count;
-    }
 
 
     public Node(int key, Location geo) {
@@ -29,11 +24,6 @@ public class Node implements NodeData {
         this.location = new Location(n.location);
         this.tag = n.tag;
         this.info = n.info;
-    }
-    public String toJson(String file){
-        Gson gson = new Gson();
-        file = gson.toJson(location);
-        return file;
     }
 
 

@@ -15,7 +15,6 @@ public class ParameterWindow extends JFrame implements ActionListener {
 
     public ParameterWindow(String flag, GraphRepresentationWindow GRW){
         this.GRW = GRW;
-        //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         if (flag.equals("s")){
             this.setLayout(new FlowLayout());

@@ -205,14 +205,14 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     }
 
 
-        /**
-         * a certain variation of the well known Dijkstra algorithm, which can be used to find the shortest path between
-         * two vertices on a weighted graph.
-         *
-         * @param src  - start node
-         * @param dest - end (target) node
-         * @return a list of all the vertices on said path, in travelling order.
-         */
+    /**
+     * a certain variation of the well known Dijkstra algorithm, which can be used to find the shortest path between
+     * two vertices on a weighted graph.
+     *
+     * @param src  - start node
+     * @param dest - end (target) node
+     * @return a list of all the vertices on said path, in travelling order.
+     */
     @Override
     public List<NodeData> shortestPath(int src, int dest) {
 
@@ -349,7 +349,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     }
 
     /**
-     * assists the isConnected func. by returning a pair of vertices out of a given collection, which
+     * assists the tsp func. by returning a pair of vertices out of a given collection, which
      * are the two closest two each other (meaning they are the two with the shortest path distance between
      * them, out of all possible pairs from the given collection).
      *
@@ -375,7 +375,7 @@ public class GraphAlgorithm implements DirectedWeightedGraphAlgorithms {
     }
 
     /**
-     * assists the isConnected func. by returning the vertex, out of a given collection, which
+     * assists the tsp func. by returning the vertex, out of a given collection, which
      * has the shortest path distance from a given source vertex.
      *
      * @param unCheckedNodes - a list of vertices
