@@ -42,7 +42,7 @@ This specific Implementation of a Directed Weighted Graph is revolved around the
 10.	*Save –* Saves the graph in a JSON file in a "pretty-printing" JSON format.
 11.	*Load –* Loads and creates a graph from a JSON file.
 ### GUI
-The Graphical User Interface of this project represents a given graph in a scale determined by the actual geographic locations that the Node of the graph represent. It also allows the user to use any of the above functions and algorithms.  
+The Graphical User Interface of this project represents a given graph in a scale determined by the actual geographic locations that the Nodes of the graph represent. It also allows the user to use any of the above functions and algorithms.  
 
 example:
 
